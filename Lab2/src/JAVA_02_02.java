@@ -84,6 +84,12 @@ void draw_horiz_line(int x1, int x2, int y) {
     }
 }
 
+void draw_frame(int x1, int x2, int y1, int y2) {
+    draw_vert_line(x1, y1, y2);
+    draw_horiz_line(x1, x2, y1);
+    draw_vert_line(x2, y1, y2);
+    draw_horiz_line(x2, x1, y2);
+}
 
 void main() {
     Scanner scanner = new Scanner(System.in);
@@ -92,8 +98,8 @@ void main() {
         clrscr();
         setfgcolor(white);
         int choice = -1;
-        print("\nDrawing lines\n1 - Vertical line\n" +
-                "2 - Horizontal line\n0 - Exit\nEnter your choice: ");
+        print("\nDrawing frames\n1 - Draw a frame\n" +
+                "0 - Exit\nEnter your choice: ");
         choice = scanner.nextInt();
         delay(1000);
         clrscr();
@@ -101,27 +107,18 @@ void main() {
             break;
         }
         else if (choice == 1) {
-             print("Enter the x coordinate: ");
-             int x = scanner.nextInt();
+             print("Enter the x1 coordinate: ");
+             int x1 = scanner.nextInt();
+             print("Enter the x2 coordinate: ");
+             int x2 = scanner.nextInt();
              print("Enter the y1 coordinate: ");
              int y1 = scanner.nextInt();
              print("Enter the y2 coordinate: ");
              int y2 = scanner.nextInt();
              delay(1000);
              clrscr();
-             draw_vert_line(x, y1, y2);
+             draw_frame(x1, x2, y1, y2);
              delay(1000);
-        }
-        else if (choice == 2) {
-            int x1 = scanner.nextInt();
-            print("Enter the x2 coordinate: ");
-            int x2 = scanner.nextInt();
-            print("Enter the y coordinate: ");
-            int y = scanner.nextInt();
-            delay(1000);
-            clrscr();
-            draw_horiz_line(x1, x2, y);
-            delay(1000);
         }
     }
 }
