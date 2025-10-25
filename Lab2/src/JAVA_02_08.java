@@ -94,32 +94,36 @@ void draw_frame_c(int x1, int x2, int y1, int y2, char c, int color) {
 }
 
 
-void planned_squares() {
+void planned_squares2() {
     // Initial square coordinates
-    int[] posX1 = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-    int[] posY1 = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-    int[] posX2 = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-    int[] posY2 = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+    int[] posX1 = {1, 2, 3, 4};
+    int[] posY1 = {1, 2, 3, 4};
+    int[] posX2 = {1, 2, 3, 4, 5, 6, 7, 8};
+    int[] posY2 = {1, 2, 3, 4, 5, 6, 7, 8};
     int[] posX3 = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
     int[] posY3 = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
     for (int i = 0; i <= 14; i++) {
-        posX1[i] = 5 + (int) (Math.random() * 80);
-        posX2[i] = 5 + (int) (Math.random() * 80);
+        if (i <= 3) {
+            posX1[i] = 5 + (int) (Math.random() * 80);
+            posY1[i] = 5 + (int) (Math.random() * 20);
+        }
+        if (i <= 7) {
+            posX2[i] = 5 + (int) (Math.random() * 80);
+            posY2[i] = 5 + (int) (Math.random() * 20);
+        }
         posX3[i] = 5 + (int) (Math.random() * 80);
-        posY1[i] = 5 + (int) (Math.random() * 20);
-        posY2[i] = 5 + (int) (Math.random() * 20);
         posY3[i] = 5 + (int) (Math.random() * 20);
     }
     char c = '*';
     while (true) {
         for (int i = 0; i <= 14; i++) {
-            draw_frame_c(posX1[i] - 1, posX1[i] + 1, posY1[i] - 1, posY1[i] + 1, c, 9); // red
-            draw_frame_c(posX2[i] - 1, posX2[i] + 1, posY2[i] - 1, posY2[i] + 1, c, 2); // green
-            draw_frame_c(posX3[i] - 1, posX3[i] + 1, posY3[i] - 1, posY3[i] + 1, c, 4); // blue
+            draw_frame_c(posX1[i % posX1.length] - 1, posX1[i % posX1.length] + 1, posY1[i % posY1.length] - 1, posY1[i % posY1.length] + 1, c, 9); // red
+            draw_frame_c(posX2[i % posX2.length] - 1, posX2[i % posX2.length] + 1, posY2[i % posY2.length] - 1, posY2[i % posY2.length] + 1, c, 2); // green
+            draw_frame_c(posX3[i % posX3.length] - 1, posX3[i % posX3.length] + 1, posY3[i % posY3.length] - 1, posY3[i % posY3.length] + 1, c, 4); // blue
             delay(200);
-            draw_frame_c(posX1[i] - 1, posX1[i] + 1, posY1[i] - 1, posY1[i] + 1, ' ', 9);
-            draw_frame_c(posX2[i] - 1, posX2[i] + 1, posY2[i] - 1, posY2[i] + 1, ' ', 2);
-            draw_frame_c(posX3[i] - 1, posX3[i] + 1, posY3[i] - 1, posY3[i] + 1, ' ', 4);
+            draw_frame_c(posX1[i % posX1.length] - 1, posX1[i % posX1.length] + 1, posY1[i % posY1.length] - 1, posY1[i % posY1.length] + 1, ' ', 9);
+            draw_frame_c(posX2[i % posX2.length] - 1, posX2[i % posX2.length] + 1, posY2[i % posY2.length] - 1, posY2[i % posY2.length] + 1, ' ', 2);
+            draw_frame_c(posX3[i % posX3.length] - 1, posX3[i % posX3.length] + 1, posY3[i % posY3.length] - 1, posY3[i % posY3.length] + 1, ' ', 4);
         }
     }
 }
@@ -127,9 +131,9 @@ void planned_squares() {
 
 void main() {
     clrscr();
-    print("\nPlanned squares");
+    print("\nPlanned squares 2");
     delay(1500);
     cursor_hide();
     clrscr();
-    planned_squares();
+    planned_squares2();
 }
