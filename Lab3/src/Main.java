@@ -60,7 +60,7 @@ void main() {
                     if (! hit_left) {
                         hit_left = true;
                         hit_right = false;
-                        sound(700,100);
+//                        sound(700,100);
                     }
                 }
             };
@@ -70,7 +70,7 @@ void main() {
                     if (! hit_right) {
                         hit_left = false;
                         hit_right = true;
-                        sound(500, 100);
+//                        sound(500, 100);
                     }
                 }
             };

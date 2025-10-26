@@ -1,2 +1,2 @@
-javac JAVA_03_07.java
-java JAVA_03_07
+javac -cp term/jline.jar term/term.java
+java --enable-native-access=ALL-UNNAMED -cp term/jline.jar JAVA_03_07.java
