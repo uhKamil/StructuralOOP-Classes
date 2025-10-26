@@ -66,9 +66,10 @@ static boolean spiral_end(int i, int j, int l, int x, int y) {
         return x + i > 120;
     } else if ((i + j + l) % 4 == 2) {
         return y + i > 30;
-    } else {
+    } else if ((i + j + l) % 4 == 3) {
         return x - i < 1;
     }
+    return (x > 120 || y > 30);
 }
 
 
@@ -77,29 +78,41 @@ void coloured_spiral(int x, int y, char c, int s) {
     // The number of rounds is one move in each direction
     // The number of steps in each round is equal to the round's number
     // Direction is given according to the remainder: 0 - up, 1 - right, 2 - down, 3 - left
-    // An additional array so we don't get an error; (int) (Math.random() * 15) can't be used
+    // An additional array so we don't get an error; (int) (Math.random() * 15) can't be used (or can it?)
     int[] colors = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15};
     int l = 0; // to correct the length needed for the round (length corrector)
+    boolean continueSpiral = true;
     // because of the j loop we divide the number of rounds by 2 and add 1 so not to skip the odd round
     for (int i = 1; i <= s / 2 + 1; i++) {
         for (int j = 0; j <= 1; j++) {
             if (spiral_end(i, j, l, x, y)) {
+                continueSpiral = false;
                 break;
             }
-            for (int k = 1; k <= i; k++) {
-                gotoxy(x, y);
-                setfgcolor(colors[(int) (Math.random() * colors.length)]);
-                if ((i + j + l) % 4 == 0) {
-                    y -= 1;
-                } else if ((i + j + l) % 4 == 1) {
-                    x += 1;
-                } else if ((i + j + l) % 4 == 2) {
-                    y += 1;
-                } else {
-                    x -= 1;
+            if (continueSpiral) {
+                for (int k = 1; k <= i; k++) {
+                    gotoxy(x, y);
+                    setfgcolor(colors[(int) (Math.random() * colors.length)]);
+                    if ((i + j + l) % 4 == 0) {
+                        y -= 1;
+                    } else if ((i + j + l) % 4 == 1) {
+                        x += 1;
+                    } else if ((i + j + l) % 4 == 2) {
+                        y += 1;
+                    } else {
+                        x -= 1;
+                    }
+                    print(c);
+                    delay(15);
+                    // Logging purposes
+//                    setfgcolor(white);
+//                    gotoxy(125, 30);
+//                    print(x);
+//                    gotoxy(128, 30);
+//                    print(y);
+//                    gotoxy(125, 31);
+//                    print((i + j + l) % 4);
                 }
-                print(c);
-                delay(5);
             }
         }
         l += 1;
