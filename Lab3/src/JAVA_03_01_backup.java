@@ -1,6 +1,7 @@
 import static java.lang.IO.*;  //including package to be able to use simple print()
 
-//move the cursor position to column x, row y
+//move cursor position to column x, row y
+
 void gotoxy(int x, int y) {
     String GOTO_XY = "\u001b[%d;%dH";
     print(String.format(GOTO_XY, y, x));
@@ -59,49 +60,35 @@ void setbgcolor(int n) {
 }
 
 // procedures
-int tree_width(int n) {
-    if (n <= 4) {
-        return 1;
-    }
-    return n-3;
-    // e.g., 20 (max * in a row) -> height=21 -> n-3=18
-}
-
-int stars_in_line(int i) {
-    return i;
-}
-
-String tree_line(int i, String c) {
-    return c.repeat(Math.max(0, i));
-}
-
-void draw_tree_branches(int x, int y, int n) {
-    setfgcolor(brown);
-    String c;
-    if (n >= 5) {
-        c = "║";
-    }
-    else {
-        c = "|";
-    }
-    gotoxy((x-1) + (n-1) / 2 + (n-1) % 2, (y-1) + (n-1) + 1);
-    print(tree_line(1, c));
-}
-
-void draw_ctree(int x, int y, int n) {
-    int rows = n - 1; // the height of the tree is the number of leaves' rows plus the row for the trunk, so we have to subtract one row
+void christmas_tree(int rows) {
+    setbgcolor(white);
+    clrscr();
     // Trunk
-    draw_tree_branches(x, y, n);
+    setfgcolor(brown);
+    if (rows == 1 || rows == 2 || rows == 3) {
+        gotoxy(2, rows + 1);
+        print('|');
+    } else {
+        for (int i = 2; i <= rows - 1; i++) {
+            gotoxy(i, rows + 1);
+            print('|');
+            delay(20);
+        }
+    }
     // The green part
     setfgcolor(green);
     int m = 0;
     if (rows == 1) {
-        gotoxy((x-1) + 2, (y-1) + 1);
+        gotoxy(2, 1);
         print('*');
-    } else {
+    }
+    else {
         for (int i = rows; i >= 1; i--) {
-            gotoxy((x-1) + 1 + m / 2, (y-1) + i);
-            print(tree_line(stars_in_line(i), "*"));
+            for (int j = i; j >= 1; j--) {
+                gotoxy(j + m / 2, i);
+                print('*');
+                delay(5);
+            }
             m += 1;
         }
     }
@@ -109,16 +96,14 @@ void draw_ctree(int x, int y, int n) {
 
 void main() {
     Scanner scanner = new Scanner(System.in);
-    int height; int posX; int posY;
-    print("Enter the height of the christmas tree: ");
-    height = scanner.nextInt();
-    print("Specify the X position of the top-left corner of the tree: ");
-    posX = scanner.nextInt();    
-    print("Specify the Y position of the top-left corner of the tree: ");
-    posY = scanner.nextInt();
+    int rows = 0;
+    while (rows < 1 || rows > 22) {
+        print("Enter the number of rows: ");
+        rows = scanner.nextInt();
+    }
     clrscr();
     cursor_hide();
     setbgcolor(white);
-    draw_ctree(posX, posY, height);
+    christmas_tree(rows);
     delay(15000);
 }

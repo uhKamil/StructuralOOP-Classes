@@ -63,15 +63,12 @@ void setbgcolor(int n) {
 void christmas_tree(int rows) {
     // Trunk
     setfgcolor(brown);
-    if (rows == 1 || rows == 2 || rows == 3) {
+    if (rows == 1 || rows == 2 || rows == 3 || rows == 4) {
         gotoxy(2, rows + 1);
         print('|');
     } else {
-        for (int i = 2; i <= rows - 1; i++) {
-            gotoxy(i, rows + 1);
-            print('|');
-            delay(20);
-        }
+        gotoxy(rows / 2 + rows % 2, rows + 1);
+        print("║");
     }
     // The green part
     setfgcolor(green);

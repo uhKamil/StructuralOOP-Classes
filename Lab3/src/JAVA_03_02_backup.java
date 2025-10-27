@@ -77,15 +77,8 @@ String tree_line(int i, String c) {
 
 void draw_tree_branches(int x, int y, int n) {
     setfgcolor(brown);
-    String c;
-    if (n >= 5) {
-        c = "║";
-    }
-    else {
-        c = "|";
-    }
-    gotoxy((x-1) + (n-1) / 2 + (n-1) % 2, (y-1) + (n-1) + 1);
-    print(tree_line(1, c));
+    gotoxy((x-1) + 2, (y-1) + (n-1) + 1);
+    print(tree_line(tree_width(n), "|"));
 }
 
 void draw_ctree(int x, int y, int n) {
