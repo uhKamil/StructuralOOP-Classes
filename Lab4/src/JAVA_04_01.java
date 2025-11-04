@@ -1,39 +1,70 @@
+import java.util.Scanner;
 import static java.lang.IO.*;
 
-static int LCG(int a, int s, int c, int m) {
-    // Inspired by the Linear congruential generator (LCG)
-    return (a * s + c) % m;
-}
+public static class LCGNumberGenerator {
 
+    private long currentSeed;
 
-static double PRNG(int n, int seed) {
-    int initial_i = LCG(1000, seed, 5, 256424);
-    print(initial_i + "\n");
-    // Calculator for the average of an array
-    double sum = initial_i;
-    double average = 0;
-    for (int i = 1; i <= n - 1; i++) {
-        int number = LCG(1000, initial_i, 5, 256424);
-        print(number + "\n");
-        initial_i = number;
-        sum += number;
-        average = sum / (i + 1);
+    private static final long LCG_M = 4294967296L;
+    private static final long LCG_A = 214013L;
+    private static final long LCG_C = 2531011L;
+
+    private static final int min_A = 10;
+    private static final int max_A = 20;
+    private static final int min_B = 50;
+    private static final int max_B = 70;
+
+    private static final int Size_A = max_A - min_A + 1;
+    private static final int Size_B = max_B - min_B + 1;
+    private static final int Size = Size_A + Size_B;
+
+    public LCGNumberGenerator(long initialSeed) {
+        this.currentSeed = initialSeed;
     }
-    return average;
+
+    /**
+     * Based on Linear congruential generator (LCG). It generates the next seed
+     * The algorithm is given as such: X_n+1 = (A * X_n + C) mod M.
+     *
+     * @return The next seed (state) in the LCG sequence.
+     */
+    private long LCG() {
+        // Linear congruential generator (LCG)
+        this.currentSeed = (LCG_A * this.currentSeed + LCG_C) % LCG_M;
+        return this.currentSeed;
+    }
+
+    void PRNG(int n) {
+        int Sum = 0;
+        for (int i = 0; i <= n; i++) {
+            long newState = LCG();
+            int r = (int) (newState % 32);
+
+            if (r <= 10) {
+                r = r + min_A;
+            } else {
+                r += r + min_B - Size_A;
+            }
+            println(r);
+            Sum += r;
+        }
+        double average = (double) Sum / n;
+        println("The average of the random number set is " + average);
+    }
 }
 
 void main() {
     Scanner scanner = new Scanner(System.in);
-    int N;
-    int s;
     while (true) {
         print("Enter how many numbers I should generate: ");
-        N = scanner.nextInt();
-        if (N == 0) {
+        int n = scanner.nextInt();
+        if (n == 0) {
             break;
         }
         print("Enter the seed: ");
-        s = scanner.nextInt();
-        print("The average of the generated number is " + PRNG(N, s) + "\n");
+        long s = scanner.nextLong();
+
+        LCGNumberGenerator generator = new LCGNumberGenerator(s);
+        generator.PRNG(n);
     }
 }

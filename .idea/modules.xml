@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Class-20251009/Class-20251009.iml" filepath="$PROJECT_DIR$/Class-20251009/Class-20251009.iml" />
       <module fileurl="file://$PROJECT_DIR$/Class-20251016/Class-20251016.iml" filepath="$PROJECT_DIR$/Class-20251016/Class-20251016.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Class-20251023/Class-20251023.iml" filepath="$PROJECT_DIR$/Class-20251023/Class-20251023.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Class-20251030/Class-20251030.iml" filepath="$PROJECT_DIR$/Class-20251030/Class-20251030.iml" />
       <module fileurl="file://$PROJECT_DIR$/Lab1/Lab1.iml" filepath="$PROJECT_DIR$/Lab1/Lab1.iml" />
       <module fileurl="file://$PROJECT_DIR$/Lab2/Lab2.iml" filepath="$PROJECT_DIR$/Lab2/Lab2.iml" />
       <module fileurl="file://$PROJECT_DIR$/Lab3/Lab3.iml" filepath="$PROJECT_DIR$/Lab3/Lab3.iml" />
@@ -13,6 +13,7 @@
       <module fileurl="file://$PROJECT_DIR$/Lecture-20251014/Lecture-20251014.iml" filepath="$PROJECT_DIR$/Lecture-20251014/Lecture-20251014.iml" />
       <module fileurl="file://$PROJECT_DIR$/Lecture-20251021/Lecture-20251021.iml" filepath="$PROJECT_DIR$/Lecture-20251021/Lecture-20251021.iml" />
       <module fileurl="file://$PROJECT_DIR$/Lecture-20251028/Lecture-20251028.iml" filepath="$PROJECT_DIR$/Lecture-20251028/Lecture-20251028.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Playground/Playground.iml" filepath="$PROJECT_DIR$/Playground/Playground.iml" />
       <module fileurl="file://$PROJECT_DIR$/StructuralOOP-Classes.iml" filepath="$PROJECT_DIR$/StructuralOOP-Classes.iml" />
       <module fileurl="file://$PROJECT_DIR$/Tasks-Class1/Tasks-Class1.iml" filepath="$PROJECT_DIR$/Tasks-Class1/Tasks-Class1.iml" />
     </modules>
