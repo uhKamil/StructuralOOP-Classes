@@ -30,6 +30,7 @@ bin/
 .DS_Store
 /ZippedTasks/
 /qodana.yaml
+/.idea/
 /Lab3/src/JAVA_03_01.class
 /Lab3/src/JAVA_03_02.class
 /Lab3/src/JAVA_03_03.class
