@@ -48,6 +48,7 @@ double cosTaylor(double a, double eps) {
 
 double[] TestCos(int N) {
     int initial = LCG(12551, 124150, 60, 100000);
+    println(initial);
     long TotalTime0 = 0;
     long TotalTime1 = 0;
     double averageDiff = 0;
@@ -60,7 +61,7 @@ double[] TestCos(int N) {
         t0 = System.nanoTime();
         double result1 = Math.cos(number);
         TotalTime1 += (System.nanoTime() - t0);
-        if (i < 50) {println(result0 + " " + result1 + " " + Math.abs(result1 - result0));}
+//        if (i % 50 == 0) {println(result0 + " " + result1 + " " + Math.abs(result1 - result0));}
         averageDiff += Math.abs(result1 - result0);
     }
     averageDiff /= N;
@@ -74,11 +75,9 @@ void main() {
     print("Enter the desired accuracy: ");
     double epsilon = scanner.nextDouble();
     print(cosTaylor(angle, epsilon) + " " + Math.cos(degToRad(angle)));
-  // The testing part
+    // The testing part
     println("\nNow let's test this computation for 10 thousand random values and compare performance with Math.cos(x)");
-    for (int i = 1; i <= 10; i++) {
-        double[] testResult = TestCos(10000);
-        println(testResult[0] + " microseconds for cosTaylor() method. " + testResult[1] + " microseconds for the" +
-                " Math.cos(x) method. The average difference between results is " + testResult[2]);
-    }
+    double[] testResult = TestCos(10000);
+    println(testResult[0] + " microseconds for cosTaylor() method. " + testResult[1] + " microseconds for the" +
+            " Math.cos(x) method. The average difference between results is " + testResult[2]);
 }

@@ -34,16 +34,16 @@ public static class LCGNumberGenerator {
         return this.currentSeed;
     }
 
-    void PRNG(int n) {
+    public void PRNG(int n) {
         int Sum = 0;
-        for (int i = 0; i <= n; i++) {
+        for (int i = 1; i <= n; i++) {
             long newState = LCG();
             int r = (int) (newState % 32);
 
             if (r <= 10) {
                 r = r + min_A;
             } else {
-                r += r + min_B - Size_A;
+                r = r + min_B - Size_A;
             }
             println(r);
             Sum += r;
@@ -53,18 +53,18 @@ public static class LCGNumberGenerator {
     }
 }
 
-void main() {
-    Scanner scanner = new Scanner(System.in);
-    while (true) {
-        print("Enter how many numbers I should generate: ");
-        int n = scanner.nextInt();
-        if (n == 0) {
-            break;
-        }
-        print("Enter the seed: ");
-        long s = scanner.nextLong();
+    void main() {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            print("Enter how many numbers I should generate: ");
+            int n = scanner.nextInt();
+            if (n == 0) {
+                break;
+            }
+            print("Enter the seed: ");
+            long s = scanner.nextLong();
 
-        LCGNumberGenerator generator = new LCGNumberGenerator(s);
-        generator.PRNG(n);
+            LCGNumberGenerator generator = new LCGNumberGenerator(s);
+            generator.PRNG(n);
+        }
     }
-}
