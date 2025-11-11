@@ -9,10 +9,10 @@ public static class LCGNumberGenerator {
     private static final long LCG_A = 214013L;
     private static final long LCG_C = 2531011L;
 
-    private static final int min_A = 10;
-    private static final int max_A = 20;
-    private static final int min_B = 50;
-    private static final int max_B = 70;
+    private static final int MIN_A = 10;
+    private static final int MAX_A = 20;
+    private static final int MIN_B = 50;
+    private static final int MAX_B = 70;
 
     private static final int Size_A = max_A - min_A + 1;
     private static final int Size_B = max_B - min_B + 1;
