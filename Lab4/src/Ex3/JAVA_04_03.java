@@ -88,5 +88,4 @@ void main() {
     double resultI = TankFillTimeSim(vt, v0, x, tau);
 
     gotoxy(1, 10); print("Difference for tau = " + tau + " s: " + String.format("%.6f", resultI - resultL) + " s");
-    delay(5000);
 }
