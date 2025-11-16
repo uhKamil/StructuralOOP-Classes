@@ -12,6 +12,8 @@ final double dev_v = 4; // constant for the acceleration equation (for Train 2 a
 final double t_osc = 180; // constant for the acceleration equation (for Train 2 after t2)
 final double tau = 0.1;
 
+final int W = 80; // Track of Doom's length
+
 static class Train {
     int id;
     double a; // train's acceleration
@@ -28,24 +30,36 @@ static class Train {
     }
 }
 
+boolean KeyQ() {
+    if (keypressed()) {
+        String key = readkeystr();
+        return key.equals("q");
+    }
+    return false;
+}
+
 void TrainCollision(Train Train1, Train Train2, double tau) {
-    double t = 0;
+    double t = 650;
+    boolean collision = false; // to print the status only once after the collision occurs
     while (true) {
         // Change trains' position during acceleration in t1, t2
-        calculatePosition(Train1, t);
-        calculatePosition(Train2, t);
-        PrintSituation(Train1, Train2, t);
+        if (!collision) {
+            calculatePosition(Train1, t);
+            calculatePosition(Train2, t);
+            PrintSituation(Train1, Train2, t);
+            TrackOfDoom(W, X, Train1.x, Train2.x);
+        }
         if (CheckCollision(Train1, Train2)) {
-            break;
+            gotoxy(1, 14);
+            setfgcolor(ltgrey);
+            print("Collision detected! Press 'q' key to quit...");
+            collision = true;
         }
-        if (keypressed()) {
-            String key = readkeystr();
-            if (key.equals("q")) {
-                break;
-            }
+        else {
+            t += tau;
         }
+        if (KeyQ()) {break;}
         delay(10);
-        t += tau;
     }
 }
 
@@ -112,7 +126,7 @@ void PrintSituation(Train Train1, Train Train2, double t) {
     print("x2 [m] = " + String.format("%.6f", x2));
     gotoxy(1, 10);
     print("Distance to collision: " + String.format("%.4f", (x2 - x1) / 1000) + " km    ");
-    gotoxy(1, 12);
+    gotoxy(1, 14);
     print("Press 'q' key to quit...");
 }
 
@@ -121,6 +135,32 @@ boolean CheckCollision(Train Train1, Train Train2) {
     return Train1.x >= Train2.x;
 }
 
+void TrackOfDoom(int W, double X, double x1, double x2) {
+    gotoxy(1, 11);
+    print("Track:");
+    gotoxy(1, 12);
+    print("=".repeat(W));
+
+    int coord1 = (int) ((int) x1 / (X / W)) + 1;
+    int coord2 = (int) ((int) x2 / (X / W)) + 1;
+    if (x2 == X) {
+        // Edge case: we don't want to print x2 outside the track
+        coord2 -= 1;
+    }
+    if (Math.abs(x1 - x2) > X / W) {
+        gotoxy(coord1, 12);
+        print(">");
+        gotoxy(coord2, 12);
+        print("<");
+    } else if (x1 > x2) {
+        gotoxy(coord1, 12);
+        setfgcolor(red);
+        print("x");
+    } else {
+        gotoxy(coord1, 12);
+        print("x");
+    }
+}
 
 void main() {
     clrscr();
