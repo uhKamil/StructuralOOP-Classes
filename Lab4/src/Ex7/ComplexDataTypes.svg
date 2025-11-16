@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="41cm" height="24cm" viewBox="140 789 812 478" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g>
+    <rect style="fill: #ffffff" x="478.844" y="840.583" width="71.6" height="28"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="478.844" y="840.583" width="71.6" height="28"/>
+    <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="514.644" y="860.583">TPoint</text>
+    <rect style="fill: #ffffff" x="478.844" y="868.583" width="71.6" height="36"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="478.844" y="868.583" width="71.6" height="36"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="481.844" y="881.783">+x: int</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="481.844" y="897.783">+y: int</text>
+    <rect style="fill: #ffffff" x="478.844" y="904.583" width="71.6" height="20"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="478.844" y="904.583" width="71.6" height="20"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="481.844" y="917.783">+Point()</text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="768.844" y="1018.71" width="182.25" height="28"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x="768.844" y="1018.71" width="182.25" height="28"/>
+    <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="859.969" y="1038.71">TPointsAroundCenter</text>
+    <rect style="fill: #ffffff" x="768.844" y="1046.71" width="182.25" height="36"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x="768.844" y="1046.71" width="182.25" height="36"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="771.344" y="1059.91">+points: TPoint[40]</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="771.344" y="1075.91">+central_point: TPoint</text>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="514.644,949.754 514.644,978.645 859.969,978.645 859.969,1018.71 "/>
+    <polygon style="fill: #000000" points="514.644,924.583 519.444,938.583 514.644,952.583 509.844,938.583 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="514.644,924.583 519.444,938.583 514.644,952.583 509.844,938.583 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="863.969" y="1014.71">0..40</text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="205.844" y="1090.58" width="294.9" height="28"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x="205.844" y="1090.58" width="294.9" height="28"/>
+    <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="353.294" y="1110.58">TAlienRobot</text>
+    <rect style="fill: #ffffff" x="205.844" y="1118.58" width="294.9" height="148"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x="205.844" y="1118.58" width="294.9" height="148"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="208.344" y="1131.78">+visited_places: TPoint[100]</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="208.344" y="1147.78">+targets: TPoints[10]</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="208.344" y="1163.78">+danger_zones: TPointsAroundCenter[4]</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="208.344" y="1179.78">+bot_structure: TPointsAroundCenter</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="208.344" y="1195.78">+plasma_containers: int[7]</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="208.344" y="1211.78">+max_speed: int</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="208.344" y="1227.78">+sub_bot: TAlienRobot</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="208.344" y="1243.78">+name: String</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="208.344" y="1259.78">+access_passwords: String[10]</text>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="453.672,878.583 353.294,878.583 353.294,1090.58 "/>
+    <polygon style="fill: #000000" points="478.844,878.583 464.844,883.383 450.844,878.583 464.844,873.783 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="478.844,878.583 464.844,883.383 450.844,878.583 464.844,873.783 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="416.069" y="874.583">visited_places</text>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="357.294" y="1086.58">0..100</text>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="514.644,815.411 514.644,805.583 141.504,805.583 141.504,1104.58 205.844,1104.58 "/>
+    <polygon style="fill: #000000" points="514.644,840.583 509.844,826.583 514.644,812.583 519.444,826.583 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="514.644,840.583 509.844,826.583 514.644,812.583 519.444,826.583 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="328.074" y="801.583">targets</text>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:end;font-family:monospace;font-style:normal;font-weight:normal" x="201.844" y="1100.58">0..10</text>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="525.915,1104.58 641.794,1104.58 641.794,1056.71 768.844,1056.71 "/>
+    <polygon style="fill: #ffffff" points="500.744,1104.58 514.744,1099.78 528.744,1104.58 514.744,1109.38 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="500.744,1104.58 514.744,1099.78 528.744,1104.58 514.744,1109.38 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="643.794" y="1076.65">danger_zones</text>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:end;font-family:monospace;font-style:normal;font-weight:normal" x="764.844" y="1052.71">0..4</text>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="525.915,1160.58 626.405,1160.58 626.405,1192.58 500.744,1192.58 "/>
+    <polygon style="fill: #000000" points="500.744,1160.58 514.744,1155.78 528.744,1160.58 514.744,1165.38 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="500.744,1160.58 514.744,1155.78 528.744,1160.58 514.744,1165.38 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="504.744" y="1188.58"> sub_bot</text>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="504.744" y="1204.58">0..1</text>
+  </g>
+</svg>
