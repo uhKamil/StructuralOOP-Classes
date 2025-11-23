@@ -39,7 +39,7 @@ boolean KeyQ() {
 }
 
 void TrainCollision(Train Train1, Train Train2, double tau) {
-    double t = 650;
+    double t = 0;
     boolean collision = false; // to print the status only once after the collision occurs
     while (true) {
         // Change trains' position during acceleration in t1, t2
