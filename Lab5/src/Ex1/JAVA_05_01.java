@@ -24,7 +24,7 @@ public class JAVA_05_01 {
     static int ball_dx, ball_dy;
     static boolean isBallMoving = false;
     static int ball_step = 0;
-    static final int BALL_SPEED = 4;
+    static final int BALL_SPEED = 2;
 
     // Game state
     static int scoreLeft = 0;
@@ -48,6 +48,7 @@ public class JAVA_05_01 {
         rightPaddleMove = 0;
 
         clrscr();
+        delay(10);
         framexyc(1, 1, TERMINAL_WIDTH, TERMINAL_HEIGHT, '#');
     }
 
@@ -149,6 +150,7 @@ public class JAVA_05_01 {
         if (nextX < leftPaddleX) {
             scoreRight++;
             playSound(200, 150);
+            ball_step = 0;
             resetPositions();
             return;
         }
@@ -156,6 +158,7 @@ public class JAVA_05_01 {
         if (nextX > rightPaddleX + PADDLE_WIDTH) {
             scoreLeft++;
             playSound(200, 150);
+            ball_step = 0;
             resetPositions();
             return;
         }
@@ -170,8 +173,11 @@ public class JAVA_05_01 {
     static void drawGame() {
         // Score
         String scoreStr = " " + scoreLeft + " : " + scoreRight + " ";
-        gotoxy((TERMINAL_WIDTH - scoreStr.length()) / 2, 1);
-        if (!scoreStr.equals(previousScore)) print(scoreStr);
+        if (ball_step == 0) framexyc(1, 1, TERMINAL_WIDTH, TERMINAL_HEIGHT, '#');
+        if (!scoreStr.equals(previousScore)) {
+            gotoxy((TERMINAL_WIDTH - scoreStr.length()) / 2, 1);
+            print(scoreStr);
+        }
         previousScore = scoreStr;
 
         // Paddles

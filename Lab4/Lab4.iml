@@ -10,7 +10,7 @@
     <orderEntry type="module-library">
       <library name="jline">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/src/Ex7/term/jline.jar!/" />
+          <root url="jar://$MODULE_DIR$/src/term/jline.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
