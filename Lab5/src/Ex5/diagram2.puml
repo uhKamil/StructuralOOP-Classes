@@ -1,0 +1,79 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam nodesep 100
+skinparam ranksep 80
+skinparam packageStyle rectangle
+hide empty members
+
+title Random Squares Game
+
+package "MODEL" {
+    class Square {
+        -x: int
+        -y: int
+        -active: boolean
+        +applyMove()
+        +isActive(): boolean
+    }
+
+    enum moveDirection {
+        UP, DOWN, LEFT, RIGHT
+    }
+
+    class Player {
+        -id: int
+        -controlMode: int
+        -score: int
+        -currentTarget: Square
+        +handleInput()
+        +think(model: SimulationModel)
+    }
+
+    class SimulationModel {
+        -width: int
+        -height: int
+        +updateSquares()
+        +updatePlayer()
+        +findClosestSquare(): Square
+    }
+
+    ' Relations
+    Player .up.> moveDirection
+    Player -right-> Square
+    
+    SimulationModel *-- Player
+    SimulationModel *-- Square
+    
+    Player .up.> SimulationModel
+}
+
+package "VIEW" {
+    class SimulationView {
+        +renderClear(model: SimulationModel)
+        +renderDraw(model: SimulationModel)
+        +displayUserInfo(model: SimulationModel)
+    }
+}
+
+package "CONTROLLER" {
+    class SimulationController {
+        -gameActive: boolean
+        +run()
+        -loadConfiguration()
+        +handleInput()
+    }
+}
+
+' Controller -> MVC relations
+SimulationController -down-> SimulationModel : controls >
+SimulationController -down-> SimulationView : updates >
+SimulationView .left.> SimulationModel : <<uses>>
+
+SimulationController -down-> SimulationModel
+SimulationController -down-> SimulationView
+SimulationView .left.> SimulationModel
+
+SimulationModel -[hidden]right- SimulationView
+SimulationController -[hidden]down- SimulationModel
+@enduml

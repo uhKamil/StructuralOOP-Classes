@@ -1,0 +1,119 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam packageStyle frame
+hide empty members
+
+' Types
+package "MODEL" {
+    class Square {
+        -x: int
+        -y: int
+        -dx: int
+        -dy: int
+        -size: int
+        -color: int
+        -active: boolean
+        +applyMove()
+        +bounceX()
+        +bounceY()
+        +getNextX(): int
+        +getNextY(): int
+    }
+
+    enum moveDirection {
+        UP
+        DOWN
+        LEFT
+        RIGHT
+    }
+
+    class Player {
+        +id: int
+        +x: int
+        +y: int
+        +prev_x: int
+        +prev_y: int
+        +color: int
+        +score: int
+        +keyUp: String
+        +keyDown: String
+        +keyLeft: String
+        +keyRight: String
+        +handleInput(key: String)
+    }
+
+    class SimulationModel {
+        -width: int
+        -height: int
+        -count: int
+        -squaresLeft: int
+        +updateSquares(): boolean
+        +updatePlayer(plr: Player): int
+        +getSquares(): Square[]
+        +getWinnerInfo(): int[]
+    }
+
+    Player +-- moveDirection
+    SimulationModel "1" o--> "1..*" Square : contains
+    SimulationModel "1" o--> "2" Player : contains
+}
+
+package "VIEW" {
+    class SimulationView {
+        +drawFrame(w: int, h: int)
+        +renderClear(model: SimulationModel)
+        +renderDraw(model: SimulationModel)
+        +displayUserInfo(model: SimulationModel)
+        -drawSquares(squares: Square[])
+        -drawPlayer(plr: Player)
+    }
+}
+
+package "CONTROLLER" {
+    class SimulationController {
+        -gameActive: boolean
+        +WIDTH: int
+        +HEIGHT: int
+        +roundLength: int
+        +run()
+        +handleInput()
+        +roundTime(): boolean
+        {static} +playSound(freq: int, dur: int)
+    }
+}
+
+' Package relations
+SimulationController --> SimulationModel : controls >
+SimulationController --> SimulationView : controls >
+SimulationView ..> SimulationModel : <<uses>>
+
+package "Objects" {
+    object "app : SimulationController" as appObj
+    object "model : SimulationModel" as modelObj
+    object "view : SimulationView" as viewObj
+    object "player1 : Player" as p1Obj {
+        id = 1
+        keys = arrows
+    }
+    object "player2: Player" as p2Obj {
+        id = 2
+        keys = wasd
+    }
+}
+
+' Wymuszenie układu: Typy na górze, Obiekty na dole
+SimulationController -[hidden]- appObj
+
+SimulationController ..> appObj : <<instantiates>>
+SimulationModel ..> modelObj : <<instantiates>>
+SimulationView ..> viewObj : <<instantiates>>
+Player ..> p1Obj : <<instantiates>>
+Player ..> p2Obj : <<instantiates>>
+
+' Memory structure
+appObj *-- modelObj
+appObj *-- viewObj
+modelObj o-- p1Obj
+modelObj o-- p2Obj
+@enduml

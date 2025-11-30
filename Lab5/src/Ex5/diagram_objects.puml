@@ -1,0 +1,34 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam packageStyle frame
+hide empty members
+
+package "Objects (Example)" {
+    object "app : SimulationController" as appObj
+    object "model : SimulationModel" as modelObj
+    object "view : SimulationView" as viewObj
+    
+    object "player1 : Player" as p1Obj {
+        id = 1
+        controlMode = 0
+    }
+    object "player2: Player" as p2Obj {
+        id = 2
+        controlMode = 1
+        currentTarget = sq1
+    }
+    
+    object "sq1 : Square" as sq1
+    object "sq2 : Square" as sq2
+}
+
+appObj *-- modelObj
+appObj *-- viewObj
+modelObj *-- p1Obj
+modelObj *-- p2Obj
+modelObj *-- sq1
+modelObj *-- sq2
+p2Obj --> sq1
+
+@enduml

@@ -1,0 +1,155 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam nodesep 80
+skinparam ranksep 60
+skinparam packageStyle rectangle
+hide empty members
+
+title Random Squares Game Architecture
+
+package "MODEL" {
+    class Square {
+        -size: int {readOnly}
+        -x: int
+        -y: int
+        -dx: int
+        -dy: int
+        -color: int
+        -active: boolean
+        -cleaned: boolean
+        +Square(w: int, h: int)
+        +randomizeVelocity()
+        +bounceX()
+        +bounceY()
+        +applyMove()
+        +isActive(): boolean
+        +isCleaned(): boolean
+    }
+
+    enum moveDirection {
+        UP, DOWN, LEFT, RIGHT
+    }
+
+    class Player {
+        -id: int {readOnly}
+        -color: int {readOnly}
+        -keys...: String {readOnly}
+        -x: int
+        -y: int
+        -prevX: int
+        -prevY: int
+        -controlMode: int
+        -currentTarget: Square
+        -score: int
+        -moveDir: moveDirection
+        +Player(id: int, int: x, keys...: String)
+        +handleInput(key: String)
+        +getDistance(targetX: int, targetY: int)
+        +think(model: SimulationModel)
+    }
+
+    class SimulationModel {
+        -width: int
+        -height: int
+        -count: int
+        +SimulationModel(count: int, width: int, height: int, players: Player[])
+        +updateSquares(): boolean
+        +updatePlayer(plr: Player): int
+        +checkIntersection(x1: int, y1: int, size1: int, x2: int, y2: int, size2: int): boolean
+        +getSquares(): Square[]
+        +getSquaresLeft(): boolean
+        +getWinnerInfo(): int[]
+        +findClosestSquare(plr: Player): Square
+    }
+
+    ' Relations
+    Player .up.> moveDirection
+    Player -right-> Square
+    
+    ' Compositions
+    SimulationModel *-- Square
+    SimulationModel *-- Player
+    
+    ' Dependency
+    Player .up.> SimulationModel
+}
+
+package "VIEW" {
+    class SimulationView {
+        +drawFrame(w: int, h: int)
+        +clearSquares(squares: Square[])
+        +drawSquares(squares: Square[])
+        +drawPlayer(plr: Player)
+        +clearPlayer(plr: Player)
+        +renderClear(model: SimulationModel)
+        +renderDraw(model: SimulationModel)
+        +displayUserInfo(model: SimulationModel)
+    }
+}
+
+package "CONTROLLER" {
+    class SimulationController {
+        {static} +WIDTH: int {readOnly}
+        {static} +HEIGHT: int {readOnly}
+        {static} +roundLength: int {readOnly}
+        +simulationSpeed: int {readOnly}
+        -gameActive: boolean
+        +SimulationController(SquareCount: int)
+        +handleInput()
+        +run()
+        +playersThink()
+        {static} +playSound(freq: int, dur: int)
+        -loadConfiguration()
+    }
+}
+
+SimulationController -down-> SimulationModel
+SimulationController -down-> SimulationView
+SimulationView .left.> SimulationModel
+
+' Controller -> MVC relations
+SimulationController -down-> SimulationModel : controls >
+SimulationController -down-> SimulationView : updates >
+SimulationView .left.> SimulationModel : <<uses>>
+
+package "Runtime Objects (Example)" {
+    object "app : SimulationController" as appObj
+    object "model : SimulationModel" as modelObj
+    object "view : SimulationView" as viewObj
+    
+    object "player1 : Player" as p1Obj {
+        id = 1
+        controlMode = 0
+    }
+    object "player2: Player" as p2Obj {
+        id = 2
+        controlMode = 1
+        currentTarget = sq1
+    }
+    
+    object "sq1 : Square" as sq1
+    object "sq2 : Square" as sq2
+}
+
+' Layout hints
+SimulationController -[hidden]down- appObj
+MODEL -[hidden]right- VIEW
+
+' Class -> Object instances
+SimulationController ..> appObj
+SimulationModel ..> modelObj
+SimulationView ..> viewObj
+Player ..> p1Obj
+Player ..> p2Obj
+
+' Object relations
+appObj *-- modelObj
+appObj *-- viewObj
+modelObj *-- p1Obj
+modelObj *-- p2Obj
+modelObj *-- sq1
+modelObj *-- sq2
+p2Obj --> sq1
+
+@enduml
