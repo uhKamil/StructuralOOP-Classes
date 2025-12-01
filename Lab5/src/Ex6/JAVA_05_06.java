@@ -294,8 +294,8 @@ void main() {
         bee1_pos = (bee1_pos + 1) % path2.count;
         bee2_pos = (bee2_pos + 1) % path2.count;
 
-        int next_game_pos = (game_dir == 0) ? game_pos++ : game_pos--;
-        int next_press_pos = (press_dir == 0) ? press_pos++ : press_pos--;
+        int next_game_pos = (game_dir == 0) ? game_pos + 1 : game_pos - 1;
+        int next_press_pos = (press_dir == 0) ? press_pos + 1 : press_pos - 1;
 
         int gameTip = calculateTip(next_game_pos, gameStart.length(), game_dir, path1.count);
         int pressTip = calculateTip(next_press_pos, pressS.length(), press_dir, path1.count);
