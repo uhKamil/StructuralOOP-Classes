@@ -1,5 +1,3 @@
-import java.awt.*;
-
 import static java.lang.IO.*;
 import static term.term.*;
 

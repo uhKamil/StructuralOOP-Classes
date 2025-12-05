@@ -4,7 +4,8 @@ import static term.term.*;
 
 static final int MODE_STANDARD = 0;
 static final int MODE_RESEED_LCG = 1;
-static final int MODE_RESEED_SECURE = 2;
+static final int MODE_SECURE = 2;
+static final int MODE_RESEED_SECURE = 3;
 
 static int[][] RandMtx(int width, int height, double n, int mode) {
     int[][] matrix = new int[height][width]; // automatically sets all values to 0
@@ -12,7 +13,7 @@ static int[][] RandMtx(int width, int height, double n, int mode) {
     Random rand;
     long k = 123456;
 
-    if (mode == MODE_RESEED_SECURE) {
+    if (mode == MODE_SECURE || mode == MODE_RESEED_SECURE) {
         rand = new SecureRandom();
     } else {
         rand = new Random(123456);
@@ -21,7 +22,7 @@ static int[][] RandMtx(int width, int height, double n, int mode) {
     for (int i = 0; i < n; i++) {
         int x, y;
 
-        if (mode == MODE_STANDARD) {
+        if (mode == MODE_STANDARD || mode == MODE_SECURE) {
             x = rand.nextInt(width);
             y = rand.nextInt(height);
         } else {
@@ -91,7 +92,6 @@ void main() {
     visualizeMatrix(matrixA);
     delay(3000);
 
-    // Part B: Coordinate Tests //
     // Matrix 2: LCG with Reseed (Coordinate Test)
     clrscr();
     int[][] matrixB = RandMtx(width, height, 5000000, MODE_RESEED_LCG);
@@ -100,10 +100,18 @@ void main() {
     visualizeMatrix(matrixB);
     delay(3000);
 
-    // Matrix 3: SecureRandom with Reseed
+    // Matrix 3: SecureRandom
     clrscr();
-    int[][] matrixC = RandMtx(width, height, 100000, MODE_RESEED_SECURE);
+    int[][] matrixC = RandMtx(width, height, 100000, MODE_SECURE);
 
     clrscr();
     visualizeMatrix(matrixC);
+    delay(3000);
+
+    // Matrix 4: SecureRandom with Reseed (Coordinate Test)
+    clrscr();
+    int[][] matrixD = RandMtx(width, height, 100000, MODE_RESEED_SECURE);
+
+    clrscr();
+    visualizeMatrix(matrixD);
 }

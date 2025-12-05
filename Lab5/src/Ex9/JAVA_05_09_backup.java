@@ -1,6 +1,5 @@
 import java.util.Random;
 import java.security.SecureRandom;
-
 import static term.term.*;
 
 static class Matrix {
