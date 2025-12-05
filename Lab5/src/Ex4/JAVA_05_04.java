@@ -196,7 +196,6 @@ static class SimulationModel {
     }
 
     public int updatePlayer(Player plr) {
-        // Move player
         plr.prev_x = plr.x;
         plr.prev_y = plr.y;
 

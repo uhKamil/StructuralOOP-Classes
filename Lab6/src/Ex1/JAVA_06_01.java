@@ -18,6 +18,16 @@ public static class TPath {
     int wrap_around = 0;     // 0: cuts, 1: wraps
 }
 
+/**
+ * Stores only the corners of the path
+ */
+public static class TCornerPath {
+    TPoint[] points = new TPoint[100];
+    int count = 0;
+    int print_direction = 0; // 0: clockwise, 1: anticlockwise
+    int wrap_around = 0;     // 0: cuts, 1: wraps
+}
+
 public static TFrame frame(int w, int h) {
     TFrame frame = new TFrame();
     frame.width = w;
@@ -38,7 +48,21 @@ public static TPath createPath() {
     return p;
 }
 
+public static TCornerPath createCornerPath() {
+    TCornerPath p = new TCornerPath();
+    for (int i = 0; i < p.points.length; i++) p.points[i] = new TPoint();
+    return p;
+}
+
+
 public static void addPoint(TPath path, TPoint p) {
+    if (path.count < path.points.length) {
+        path.points[path.count] = point(p.x, p.y);
+        path.count++;
+    }
+}
+
+public static void addPoint(TCornerPath path, TPoint p) {
     if (path.count < path.points.length) {
         path.points[path.count] = point(p.x, p.y);
         path.count++;
@@ -50,7 +74,19 @@ public static TPoint getLastPoint(TPath path) {
     return path.points[path.count - 1];
 }
 
+public static TPoint getLastPoint(TCornerPath path) {
+    if (path.count == 0) return null;
+    return path.points[path.count - 1];
+}
+
 public static boolean isPointOnPath(TPath path, TPoint p) {
+    for (int i = 0; i < path.count; i++) {
+        if (path.points[i].x == p.x && path.points[i].y == p.y) return true;
+    }
+    return false;
+}
+
+public static boolean isPointOnPath(TCornerPath path, TPoint p) {
     for (int i = 0; i < path.count; i++) {
         if (path.points[i].x == p.x && path.points[i].y == p.y) return true;
     }
@@ -76,6 +112,31 @@ public static boolean isSegmentValid(TPoint a, TPoint b) {
  * Adds a segment of connected points to the given path.
  */
 public static void addSegment(TPath path, TPoint a, TPoint b) {
+    if (!isSegmentValid(a, b)) return;
+
+    TPoint lastPoint = getLastPoint(path);
+    boolean skipFirst = (lastPoint != null && lastPoint.x == a.x && lastPoint.y == a.y);
+
+    // Decide the direction of writing the segment
+    int stepX = Integer.compare(b.x, a.x);
+    int stepY = Integer.compare(b.y, a.y);
+
+    int currentX = a.x;
+    int currentY = a.y;
+
+    while (true) {
+        if (segmentConditions(currentX, currentY, path, a, b, skipFirst)) addPoint(path, point(currentX, currentY));
+        if (currentX == b.x && currentY == b.y) break;
+
+        currentX += stepX;
+        currentY += stepY;
+    }
+}
+
+/**
+ * Adds a segment of connected points to the given path.
+ */
+public static void addSegment(TCornerPath path, TPoint a, TPoint b) {
     if (!isSegmentValid(a, b)) return;
 
     TPoint lastPoint = getLastPoint(path);

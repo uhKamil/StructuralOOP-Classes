@@ -350,7 +350,6 @@ static class SimulationModel {
     }
 
     public int updatePlayer(Player plr) {
-        // Move player
         plr.setPrevX(plr.getX());
         plr.setPrevY(plr.getY());
 

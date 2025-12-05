@@ -246,20 +246,20 @@ static class GameController {
     void run() {
         model.resetPositions();
         view.drawFrame(Frame.TERMINAL_WIDTH, Frame.TERMINAL_HEIGHT);
-        while(gameRunning) {
+        while (gameRunning) {
             model.drawGame();
             model.handleInput();
-        if (Ball.isBallMoving && Ball.step % Ball.speed == 0) {
-            model.updatePhysics();
+            if (Ball.isBallMoving && Ball.step % Ball.speed == 0) {
+                model.updatePhysics();
+            }
+            Ball.step += 1;
+            delay(20);
         }
-        Ball.step += 1;
-        delay(20);
-    }
 
-    setfgcolor(7);
-    clrscr();
-    println("Game over.\nFinal score: "+GameModel.scoreLeft +" : "+GameModel.scoreRight);
-}
+        setfgcolor(7);
+        clrscr();
+        println("Game over.\nFinal score: " + GameModel.scoreLeft + " : " + GameModel.scoreRight);
+    }
 }
 
 void main() {
