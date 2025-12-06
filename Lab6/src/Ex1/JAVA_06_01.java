@@ -1,10 +1,10 @@
 package Ex1;
+
 import static java.lang.IO.*;
 import static term.term.*;
 
-// Data structures //
-
 public class JAVA_06_01 {
+    // Data structures //
     public static class TFrame {
         public int width, height;
     }
