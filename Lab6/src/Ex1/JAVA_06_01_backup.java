@@ -272,62 +272,7 @@ public static void AddSectionsToPath(TPath path, TPoint... points) {
     }
 }
 
-public static void AddSectionsToPath(TCornerPath path, TPoint... points) {
-    if (points.length == 0) return;
-
-    // if points are odd, then the last point should be added to the path but not
-    // to the segment; if points are even, then add each to separate segments
-
-    for (int i = 0; i < points.length - 1; i++) {
-        TPoint p1 = points[i];
-        TPoint p2 = points[i + 1];
-
-        if (isSegmentValid(p1, p2)) {
-            addSegment(path, p1, p2);
-        } else {
-            TPoint last = getLastPoint(path);
-            if (last == null || last.x != p1.x || last.y != p1.y) {
-                addPoint(path, p1);
-            }
-        }
-    }
-
-    TPoint finalP = points[points.length - 1];
-    TPoint lastInPath = getLastPoint(path);
-    if (lastInPath == null || lastInPath.x != finalP.x || lastInPath.y != finalP.y) {
-        if (points.length > 1 && !isSegmentValid(points[points.length - 2], finalP)) addPoint(path, finalP);
-        else if (points.length == 1) addPoint(path, finalP);
-    }
-}
-
 static void addPath(TPath dest, TPath src) {
-    if (src.count == 0) return;
-
-    TPoint destLast = getLastPoint(dest);
-
-    for (int i = 0; i < src.count; i++) {
-        boolean add = true;
-        TPoint p = src.points[i];
-
-        // The first point of src overlaps the last point of dest
-        if (i == 0 && destLast != null && p.x == destLast.x && p.y == destLast.y) {
-            add = false;
-        }
-
-        // The last point of src overlaps the first point of dest
-        if (i == src.count - 1 && dest.count > 0) {
-            if (p.x == dest.points[0].x && p.y == dest.points[0].y) {
-                add = false;
-            }
-        }
-
-        if (add) {
-            addPoint(dest, point(p.x, p.y));
-        }
-    }
-}
-
-static void addPath(TCornerPath dest, TCornerPath src) {
     if (src.count == 0) return;
 
     TPoint destLast = getLastPoint(dest);
@@ -358,8 +303,8 @@ static void WriteStringOnPath(String text, TPath path, int startIdx) {
     WriteStringOnPathWithOffset(text, path, startIdx, path.print_direction, path.wrap_around, point(0, 0));
 }
 
-static void WriteStringOnPath(String text, TCornerPath path, int startIdx) {
-    WriteStringOnPathWithOffset(text, path, startIdx, path.print_direction, path.wrap_around, point(0, 0));
+static void WriteStringOnPath(String text, TPath path, int startIdx, int direction, int wrap) {
+    WriteStringOnPathWithOffset(text, path, startIdx, direction, wrap, point(0, 0));
 }
 
 /**
@@ -385,32 +330,7 @@ static void WriteStringOnPathWithOffset(String text, TPath path, int startIdx, i
     }
 }
 
-static void WriteStringOnPathWithOffset(String text, TCornerPath path, int startIdx, int direction, int wrap, TPoint offset) {
-    if (path.count == 0) return;
-
-    int currentIdx = startIdx % path.count;
-    if (currentIdx < 0) currentIdx += path.count;
-
-    for (int i = 0; i < text.length(); i++) {
-        if (wrap == 0 && (currentIdx < 0 || currentIdx >= path.count)) break;
-
-        int actualIdx = (currentIdx % path.count + path.count) % path.count;
-
-        TPoint p = path.points[actualIdx];
-        printAt(p.x + offset.x, p.y + offset.y, String.valueOf(text.charAt(i)));
-
-        // Move the string
-        if (direction == 0) currentIdx++;
-        else currentIdx--;
-    }
-}
-
 static void printAt(int x, int y, String s) {
-    gotoxy(x, y);
-    print(s);
-}
-
-static void printAt(int x, int y, char s) {
     gotoxy(x, y);
     print(s);
 }
@@ -461,19 +381,12 @@ void main() {
     addPoint(path2, point(1,1));
     addSegment(path2, point(5,5), point(9, 1));
 
-    boolean p1 = isPointOnPath(path1, point(4,4)); // true
-    boolean p2 = isPointOnPath(path2, point(7,3)); // true
-
-    AddSectionsToPath(path1, point(15,15), point(30, 20));
-
-    TCornerPath path3 = createCornerPath();
-    AddSectionsToPath(path3, point(35,17), point(40, 15));
-    addPath(path1, path3);
-
     drawPath(path2, '#');
     delay(3000);
     drawPath(path1, '*');
-    WriteStringOnPath("Hi there", path1, 0);
+
+    boolean p1 = isPointOnPath(path1, point(4,4)); // true
+    boolean p2 = isPointOnPath(path1, point(7,3)); // true
 
     clrscr();
 }
