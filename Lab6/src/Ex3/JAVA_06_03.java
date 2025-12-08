@@ -443,14 +443,23 @@ public class JAVA_06_03 {
         model.strBeReady2 = createMovingString("Be ready!", model.path2, GetPathLength(model.path2) / 2, 1, white, false);
         model.strPathmania = createMovingString("Pathmania mode! Pathy paths everywhere!", model.path3, 0, 1, white, false);
         model.strSpiral = createMovingString("SPIRAL SPIRAL", model.path4, 0, 1, red, true);
-    }
-
-    public void run(AppController controller) {
-        init(controller);
+        
         drawPathFull(controller.model.path1);
         drawPathFull(controller.model.path2);
         drawPathFull(controller.model.path3);
         drawPathFull(controller.model.path4);
+    }
+
+    private void handleInput(AppController controller) {
+        if (keypressed()) {
+            String k = readkeystr();
+            if (k.equals("q")) controller.model.isRunning = false;
+            if (k.equals("p")) reverseDirection(controller.model.strPathmania);
+        }
+    }
+
+    public void run(AppController controller) {
+        init(controller);
         render(controller.model);
 
         long lastTime = System.currentTimeMillis();
@@ -465,14 +474,6 @@ public class JAVA_06_03 {
             render(controller.model);
 
             delay(15);
-        }
-    }
-
-    private void handleInput(AppController controller) {
-        if (keypressed()) {
-            String k = readkeystr();
-            if (k.equals("q")) controller.model.isRunning = false;
-            if (k.equals("p")) reverseDirection(controller.model.strPathmania);
         }
     }
 

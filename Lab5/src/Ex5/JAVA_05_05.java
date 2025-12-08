@@ -97,14 +97,9 @@ static class Square {
 
 static class Player {
     public enum moveDirection {UP, DOWN, LEFT, RIGHT}
-    
+
     private final int id;
     private final int color;
-    private final String keyUp;
-    private final String keyDown;
-    private final String keyLeft;
-
-    private final String keyRight;
     private int x;
     private int y;
     private int prevX;
@@ -117,27 +112,12 @@ static class Player {
 
     private moveDirection moveDir = null;
 
-    public Player(int id, int x, String keyUp, String keyDown, String keyLeft, String keyRight) {
+    public Player(int id) {
         this.id = id;
-        this.x = x;
-        this.y = SimulationController.HEIGHT / 2;
-        this.prevX = x;
-        this.prevY = y;
-        this.keyUp = keyUp;
-        this.keyDown = keyDown;
-        this.keyLeft = keyLeft;
-        this.keyRight = keyRight;
 
         final int[] palette = {green, lime, magenta, cyan, red, ltgreen, yellow, white}; // excluded dark colors
         int colorIndex = (int) (Math.random() * palette.length);
         this.color = palette[colorIndex];
-    }
-
-    public void handleInput(String key) {
-        if (key.equals(getKeyUp())) setMoveDir(moveDirection.UP);
-        else if (key.equals(getKeyDown())) setMoveDir(moveDirection.DOWN);
-        else if (key.equals(getKeyLeft())) setMoveDir(moveDirection.LEFT);
-        else if (key.equals(getKeyRight())) setMoveDir(moveDirection.RIGHT);
     }
 
     private int getDistance(int targetX, int targetY) {
@@ -195,8 +175,7 @@ static class Player {
                 if (Math.abs(dx) > Math.abs(dy)) {
                     if (dx > 0) this.setMoveDir(moveDirection.RIGHT);
                     else this.setMoveDir(moveDirection.LEFT);
-                }
-                else {
+                } else {
                     if (dy > 0) this.setMoveDir(moveDirection.DOWN);
                     else this.setMoveDir(moveDirection.UP);
                 }
@@ -248,22 +227,6 @@ static class Player {
         return controlMode;
     }
 
-    public String getKeyUp() {
-        return keyUp;
-    }
-
-    public String getKeyDown() {
-        return keyDown;
-    }
-
-    public String getKeyLeft() {
-        return keyLeft;
-    }
-
-    public String getKeyRight() {
-        return keyRight;
-    }
-
     public int getScore() {
         return score;
     }
@@ -303,6 +266,23 @@ static class SimulationModel {
 
         for (int i = 0; i < count; i++) {
             this.squares[i] = new Square(width, height);
+        }
+
+        if (players.length == 1) players[0].setX(width / 2);
+        else {
+            for (int i = 0; i < players.length; i++) {
+                if (i % 2 == 0) {
+                    players[i].setX(width / 4);
+                    players[i].setPrevX(width / 4);
+                    players[i].setY(height / 2);
+                    players[i].setPrevY(height / 2);
+                } else {
+                    players[i].setX(width * 3 / 4);
+                    players[i].setPrevX(width * 3 / 4);
+                    players[i].setY(height / 2);
+                    players[i].setPrevY(height / 2);
+                }
+            }
         }
     }
 
@@ -432,6 +412,12 @@ static class SimulationModel {
         }
         return bestSquare;
     }
+
+    public void playersThink(SimulationModel model, Player[] players) {
+        for (Player plr : players) {
+            plr.think(model);
+        }
+    }
 }
 
 static class SimulationView {
@@ -491,8 +477,31 @@ static class SimulationView {
         } else {
             plr_msg = "Player " + plr_info[1] + " had the most points (" + plr_info[0] + ")";
         }
-        gotoxy((SimulationController.WIDTH - plr_msg.length()) / 2, SimulationController.HEIGHT / 2 + 1);
+        gotoxy((model.width - plr_msg.length()) / 2, model.height / 2 + 1);
         println(plr_msg);
+    }
+
+    public void updateScoreboard(SimulationModel model, char state) {
+        drawFrame(model.width, model.height);
+        String msg = state == 'w' ? "YOU WON" : "GAME OVER";
+        gotoxy((model.width - msg.length()) / 2, model.height / 2);
+        print(msg);
+        displayUserInfo(model);
+    }
+
+    public void uiInfo(SimulationModel model, Player[] players, long timeLeft) {
+        setfgcolor(7);
+        int plr_index = 1;
+        for (Player plr : players) {
+            String player_info = String.format(" %d ", plr.getScore());
+            gotoxy((model.width - player_info.length()) * plr_index / (players.length + 1), 1);
+            print(player_info);
+            plr_index += 1;
+        }
+        String ui_info = String.format(" Time left: %d s | Press 'q' to quit ",
+                timeLeft);
+        gotoxy((model.width - ui_info.length()) / 2, model.height);
+        print(ui_info);
     }
 }
 
@@ -500,19 +509,28 @@ static class SimulationController {
     private final SimulationModel model;
     private final SimulationView view;
 
-    public static final int WIDTH = 120;
-    public static final int HEIGHT = 30;
     public static final int roundLength = 60; // round duration in seconds
     public final int simulationSpeed = 80;
     private boolean gameActive = true;
 
-    Player player1 = new Player(1, SimulationController.WIDTH / 4, "arrow_up", "arrow_dn", "arrow_lt", "arrow_rt");
-    Player player2 = new Player(2, SimulationController.WIDTH * 3 / 4, "w", "s", "a", "d");
+    static class KeyBinding {
+        public String[] keys;
+        public int playerIndex;
 
-    Player[] players = {player1, player2};
+        public KeyBinding(String[] keys, int playerIndex) {
+            this.keys = keys;
+            this.playerIndex = playerIndex;
+        }
+    }
 
-    public SimulationController(int squareCount) {
-        this.model = new SimulationModel(squareCount, WIDTH, HEIGHT, players);
+    private final KeyBinding[] controls = {
+        new KeyBinding(new String[]{"arrow_up", "arrow_dn", "arrow_lt", "arrow_rt"}, 0),
+        new KeyBinding(new String[]{"w", "s", "a", "d"}, 1),
+        new KeyBinding(new String[]{"i", "j", "k", "l"}, 2)
+    };
+
+    public SimulationController(int squareCount, Player[] players) {
+        this.model = new SimulationModel(squareCount, 120, 30, players);
         this.view = new SimulationView();
     }
 
@@ -520,33 +538,47 @@ static class SimulationController {
         return System.currentTimeMillis();
     }
 
-    public void handleInput() {
+    public void handleInput(Player[] players) {
         while (keypressed()) {
             String key = readkeystr();
-            for (Player plr : players) {
-                if (plr.getControlMode() == 0) plr.handleInput(key);
+            int i = 1;
+            for (KeyBinding binding : controls) {
+                if (i > players.length) break;
+                int j = 0;
+                for (String k : binding.keys) {
+                    if (key.equals(k)) {
+                        if (players[binding.playerIndex].getControlMode() == 0) {
+                            if (j == 0) players[binding.playerIndex].setMoveDir(Player.moveDirection.UP);
+                            else if (j == 1) players[binding.playerIndex].setMoveDir(Player.moveDirection.DOWN);
+                            else if (j == 2) players[binding.playerIndex].setMoveDir(Player.moveDirection.LEFT);
+                            else players[binding.playerIndex].setMoveDir(Player.moveDirection.RIGHT);
+                        }
+                    }
+                    j += 1;
+                }
+                i += 1;
             }
             if (key.equals("q")) gameActive = false;
         }
     }
 
     public void run() {
-        loadConfiguration();
+        loadConfiguration(model.players);
+
         clrscr();
         cursor_hide();
-        view.drawFrame(WIDTH, HEIGHT);
 
+        view.drawFrame(model.width, model.height);
         long startTime = System.currentTimeMillis();
 
         while (roundTime(startTime, roundLength) && gameActive) {
-            handleInput();
+            handleInput(model.players);
             view.renderClear(model);
 
             boolean collision = model.updateSquares();
-            
-            playersThink();
-            int eatEvent1 = model.updatePlayer(player1);
-            int eatEvent2 = model.updatePlayer(player2);
+            model.playersThink(model, model.players);
+            int eatEvent1 = model.updatePlayer(model.players[0]);
+            int eatEvent2 = model.updatePlayer(model.players[1]);
 
             if (eatEvent1 == 1) playSound(600, 100);
             else if (eatEvent2 == 2) playSound(800, 100);
@@ -555,43 +587,18 @@ static class SimulationController {
             view.renderDraw(model);
             long timeLeft = roundLength - (currentTime() - startTime) / 1000;
 
-            setfgcolor(7);
-            int plr_index = 1;
-            for (Player plr : players) {
-                String player_info = String.format(" %d ", plr.getScore());
-                gotoxy((WIDTH - player_info.length()) * plr_index / (players.length + 1), 1);
-                print(player_info);
-                plr_index += 1;
-            }
-            String ui_info = String.format(" Time left: %d s | Press 'q' to quit ",
-                    timeLeft);
-            gotoxy((WIDTH - ui_info.length()) / 2, HEIGHT);
-            print(ui_info);
+            view.uiInfo(model, model.players, timeLeft);
 
             if (!model.getSquaresLeft()) {
                 gameActive = false;
-                view.drawFrame(WIDTH, HEIGHT);
-                String win_info = "YOU WON!";
-                gotoxy((WIDTH - win_info.length()) / 2, HEIGHT / 2);
-                println(win_info);
-                view.displayUserInfo(model);
-                delay(4000);
-                clrscr();
+                view.updateScoreboard(model, 'w');
             }
-
             System.out.flush();
             delay(simulationSpeed);
         }
-        if (model.getSquaresLeft()) {
-            setfgcolor(7);
-            view.drawFrame(WIDTH, HEIGHT);
-            String lose_info = "GAME OVER";
-            gotoxy((WIDTH - lose_info.length()) / 2, HEIGHT / 2);
-            print(lose_info);
-            view.displayUserInfo(model);
-            delay(4000);
-            clrscr();
-        }
+        if (model.getSquaresLeft()) view.updateScoreboard(model, 'l');
+        delay(4000);
+        clrscr();
     }
 
     public boolean roundTime(long startTime, int roundLength) {
@@ -607,13 +614,7 @@ static class SimulationController {
         }).start();
     }
 
-    public void playersThink() {
-        for (Player plr : players) {
-            plr.think(model);
-        }
-    }
-
-    private void loadConfiguration() {
+    private void loadConfiguration(Player[] players) {
 //        String fileName = "conf.cfg";
         String fileName = "Ex5" + File.separator + "conf.cfg";
         File file = new File(fileName);
@@ -635,7 +636,7 @@ static class SimulationController {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
-                
+
                 String[] parts = line.split(":");
                 if (parts.length > 1) {
                     String label = parts[0].trim(); // should throw sth like "Player 1"
@@ -671,5 +672,9 @@ static class SimulationController {
 }
 
 void main() {
-    new SimulationController(10).run();
+    Player player1 = new Player(1);
+    Player player2 = new Player(2);
+    Player[] players = {player1, player2};
+
+    new SimulationController(10, players).run();
 }
