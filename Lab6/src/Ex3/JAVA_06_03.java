@@ -337,9 +337,22 @@ public class JAVA_06_03 {
     private void reverseDirection(MovingString ms) {
         ms.direction *= -1;
         ms.speed = 5.0;
-
+        
+        String text = ms.text;
+        ms.text = getReversedString(text, ms.text.length());
+        
         if (ms.direction == -1) ms.position = ms.position + ms.text.length();
         else ms.position = ms.position - ms.text.length();
+    }
+
+    private static String getReversedString(String text, int length) {
+        String reversedText;
+        char[] rev = new char[length];
+        for (int i = 0; i < length; i++) {
+            rev[i] = text.charAt(length - i - 1);
+        }
+        reversedText = new String(rev);
+        return reversedText;
     }
 
     // ==================== VIEW ====================
@@ -368,10 +381,16 @@ public class JAVA_06_03 {
             int normIdx = idx % totalLen;
             if (normIdx < 0) normIdx += totalLen;
 
-            if (ms.isBouncing || !(idx < 0 || idx >= totalLen)) {
-                TPoint p = GetPathNthPoint(ms.path, normIdx);
-                gotoxy(p.x, p.y);
-                print(ms.path.pathChar);
+            boolean wasVisible = true;
+            if (ms.isBouncing) if (idx < 0 || idx >= totalLen) wasVisible = false;
+
+            if (wasVisible) {
+                TPoint pOld = GetPathNthPoint(ms.path, normIdx);
+                // Clear only if the text doesn't cover the path
+                if (!checkTextCover(ms, pOld)) {
+                    gotoxy(pOld.x, pOld.y);
+                    print(ms.path.pathChar);
+                }
             }
 
             if (ms.direction == 1) idx++;
@@ -407,11 +426,33 @@ public class JAVA_06_03 {
         setfgcolor(7);
     }
 
+    private boolean checkTextCover(MovingString ms, TPoint pOld) {
+        int totalLen = GetPathLength(ms.path);
+        int newIdx = (int) ms.position;
+
+        for (int i = 0; i < ms.text.length(); i++) {
+            int normIdx = newIdx % totalLen;
+            if (normIdx < 0) normIdx += totalLen;
+
+            boolean willDraw = true;
+            if (ms.isBouncing) if (newIdx < 0 || newIdx >= totalLen) willDraw = false;
+
+            if (willDraw) {
+                TPoint pNew = GetPathNthPoint(ms.path, normIdx);
+                if (pNew.x == pOld.x && pNew.y == pOld.y) return true;
+            }
+
+            if (ms.direction == 1) newIdx++;
+            else newIdx--;
+        }
+        return false;
+    }
+
     private void render(AppModel model) {
         clearString(model.strBeReady1);
         clearString(model.strBeReady2);
-        if ((int) model.strWelcome.prevPosition != (int) model.strWelcome.position) clearString(model.strWelcome);
-        if ((int) model.strPress.prevPosition != (int) model.strPress.position) clearString(model.strPress);
+        clearString(model.strWelcome);
+        clearString(model.strPress);
         clearString(model.strSpiral);
         clearString(model.strPathmania);
         drawString(model.strBeReady1);
@@ -443,7 +484,7 @@ public class JAVA_06_03 {
         model.strBeReady2 = createMovingString("Be ready!", model.path2, GetPathLength(model.path2) / 2, 1, white, false);
         model.strPathmania = createMovingString("Pathmania mode! Pathy paths everywhere!", model.path3, 0, 1, white, false);
         model.strSpiral = createMovingString("SPIRAL SPIRAL", model.path4, 0, 1, red, true);
-        
+
         drawPathFull(controller.model.path1);
         drawPathFull(controller.model.path2);
         drawPathFull(controller.model.path3);
