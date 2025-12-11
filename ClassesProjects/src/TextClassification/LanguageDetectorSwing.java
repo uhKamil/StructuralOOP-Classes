@@ -7,14 +7,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Map;
 
-public class LanguageDetector extends JFrame {
+public class LanguageDetectorSwing extends JFrame {
     private final DocumentParser parser;
-    private final Map<String, Map<Character, Double>> knowledgeBase;
+    private final Map<String, Map<String, Double>> knowledgeBase;
 
     private JTextArea inputArea;
     private JLabel resultLabel;
 
-    public LanguageDetector() {
+    public LanguageDetectorSwing() {
         LanguageData loader = new LanguageData();
         loader.loadCsv("./ClassesProjects/src/TextClassification/letterFrequency.csv");
         this.knowledgeBase = loader.getProfiles();
@@ -60,7 +60,6 @@ public class LanguageDetector extends JFrame {
         bottomPanel.add(analyzeButton);
         add(bottomPanel, BorderLayout.SOUTH);
 
-        // Event handling
         analyzeButton.addActionListener(_ -> performAnalysis());
         loadFileButton.addActionListener(_ -> chooseFile());
     }
@@ -75,11 +74,12 @@ public class LanguageDetector extends JFrame {
             return;
         }
 
-        if (text.trim().length() < 20) {
+        else if (text.trim().length() < 20) {
             JOptionPane.showMessageDialog(this, "Your text is very short. The result might be inaccurate.", "Warning", JOptionPane.WARNING_MESSAGE);
         }
 
-        String detectedLang = parser.classifyLanguage(text, knowledgeBase);
+        Map<String, Double> docProfile = parser.analyzeUnigrams(text);
+        String detectedLang = parser.classifyLanguage(docProfile, knowledgeBase);
 
         resultLabel.setText("Detected language: " + detectedLang);
         resultLabel.setForeground(new Color(0, 100, 0));
@@ -87,7 +87,7 @@ public class LanguageDetector extends JFrame {
 
     private void chooseFile() {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Text files (.txt, .md)", "txt", "md"));
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Text files (*.txt, *.md)", "txt", "md"));
 
         fileChooser.setCurrentDirectory(new File("."));
 
@@ -107,6 +107,6 @@ public class LanguageDetector extends JFrame {
     }
 
     static void main() {
-        SwingUtilities.invokeLater(() -> new LanguageDetector().setVisible(true));
+        SwingUtilities.invokeLater(() -> new LanguageDetectorSwing().setVisible(true));
     }
 }

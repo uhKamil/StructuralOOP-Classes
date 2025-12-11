@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LanguageData {
-    public static final Map<String, Map<Character, Double>> profiles = new HashMap<>();
+    public static final Map<String, Map<String, Double>> profiles = new HashMap<>();
 
     public void loadCsv(String filePath) {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
@@ -17,19 +17,23 @@ public class LanguageData {
             if ((line = br.readLine()) != null) {
                 headers = line.split(",");
                 for (int i = 1; i < headers.length; i++) {
-                    profiles.put(headers[i], new HashMap<>());
+                    profiles.putIfAbsent(headers[i].trim(), new HashMap<>());
                 }
             }
 
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
-                char letter = values[0].charAt(0);
+                String feature = values[0].trim();
 
                 for (int i = 1; i < values.length; i++) {
-                    assert headers != null;
-                    String lang = headers[i];
-                    double frequency = Double.parseDouble(values[i]);
-                    profiles.get(lang).put(letter, frequency);
+                    if (headers != null && i < headers.length) {
+                        String lang = headers[i].trim();
+                        try {
+                            double frequency = Double.parseDouble(values[i]);
+                            profiles.get(lang).put(feature, frequency);
+                        } catch (NumberFormatException _) {
+                        }
+                    }
                 }
             }
         } catch (IOException e) {
@@ -38,7 +42,7 @@ public class LanguageData {
         }
     }
 
-    public Map<String, Map<Character, Double>> getProfiles() {
+    public Map<String, Map<String, Double>> getProfiles() {
         return profiles;
     }
 }
