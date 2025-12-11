@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Set;
 import java.util.Map;
 
 public class LanguageDetectorFX extends Application {
@@ -27,6 +28,7 @@ public class LanguageDetectorFX extends Application {
     private final DocumentParser parser;
     private final Map<String, Map<String, Double>> unigramKnowledgeBase;
     private final Map<String, Map<String, Double>> bigramKnowledgeBase;
+    private final Set<String> validBigrams;
 
     private TextArea inputArea;
     private Label resultLabel;
@@ -38,6 +40,7 @@ public class LanguageDetectorFX extends Application {
     public final String enterMsg = "Enter text to classify...";
 
     public LanguageDetectorFX() {
+
         this.parser = new DocumentParser();
 
         LanguageData unigramLoader = new LanguageData();
@@ -47,6 +50,12 @@ public class LanguageDetectorFX extends Application {
         LanguageData bigramLoader = new LanguageData();
         bigramLoader.loadCsv("./ClassesProjects/src/TextClassification/bigramsFrequency.csv");
         this.bigramKnowledgeBase = bigramLoader.getProfiles();
+
+        if (!bigramKnowledgeBase.isEmpty()) {
+            validBigrams = bigramKnowledgeBase.values().iterator().next().keySet();
+        } else {
+            validBigrams = new java.util.HashSet<>();
+        }
     }
 
     @Override
@@ -162,7 +171,7 @@ public class LanguageDetectorFX extends Application {
         Map<String, Map<String, Double>> currentKnowledgeBase;
 
         if (selectedAlgo.contains("Bigrams")) {
-            profile = parser.analyzeBigrams(text);
+            profile = parser.analyzeBigrams(text, validBigrams);
             currentKnowledgeBase = bigramKnowledgeBase;
         } else {
             profile = parser.analyzeUnigrams(text);

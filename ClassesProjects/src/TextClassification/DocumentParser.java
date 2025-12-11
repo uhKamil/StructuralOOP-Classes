@@ -2,6 +2,7 @@ package TextClassification;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class DocumentParser {
     private final Map<String, Double> languageDist = new HashMap<>();
@@ -52,14 +53,16 @@ public class DocumentParser {
     }
 
     // Algorithm 2: Bigrams
-    public Map<String, Double> analyzeBigrams(String text) {
+    public Map<String, Double> analyzeBigrams(String text, Set<String> allowedBigrams) {
         Map<String, Integer> counts = new HashMap<>();
         long totalBigrams = 0;
         String cleanText = text.toLowerCase().replaceAll("[^a-z]", "");
 
         for (int i = 0; i < cleanText.length() - 1; i++) {
             String bigram = cleanText.substring(i, i + 2);
-            counts.put(bigram, counts.getOrDefault(bigram, 0) + 1);
+            if (allowedBigrams.contains(bigram)) {
+                counts.put(bigram, counts.getOrDefault(bigram, 0) + 1);
+            }
             totalBigrams++;
         }
         return normalize(counts, totalBigrams);
