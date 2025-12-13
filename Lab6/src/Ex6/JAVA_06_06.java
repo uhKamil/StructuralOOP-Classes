@@ -7,9 +7,10 @@ import static term.term.*;
 
 public class JAVA_06_06 {
     static class Square {
-        private final int size;
-        private int x, y;
-        private int dx, dy;
+        private final double size;
+        private final double gravity = 0.1;
+        private double x, y;
+        private double dx, dy;
         private int color;
         private boolean active = true;
         private boolean cleaned = false;
@@ -34,7 +35,7 @@ public class JAVA_06_06 {
             this.dy = 0;
             while (this.dx == 0 && this.dy == 0) {
                 this.dx = (int) (Math.random() * 3) - 1;
-                this.dy = (int) (Math.random() * 3) - 1;
+                this.dy = (int) (Math.random() * 3) - 2;
             }
         }
 
@@ -47,14 +48,14 @@ public class JAVA_06_06 {
         // Invert vertical moving direction
         public void bounceY() {
             this.dy = -this.dy;
-            if (this.dy == 0) this.dy = (Math.random() < 0.5) ? 1 : -1;
         }
 
         public void applyMove() {
             x += dx;
+            dy += gravity;
             y += dy;
         }
-
+        
         public boolean isActive() {
             return active;
         }
@@ -63,23 +64,27 @@ public class JAVA_06_06 {
             return cleaned;
         }
 
-        public int getNextX() {
+        public double getNextX() {
             return x + dx;
         }
 
-        public int getNextY() {
-            return y + dy;
+        public double getNextY() {
+            return y + (gravity + dy);
         }
 
-        public int getX() {
+        public double getX() {
             return x;
         }
 
-        public int getY() {
+        public double getY() {
             return y;
         }
+        
+        public void setY(double y) {
+            this.y = y;
+        }
 
-        public int getSize() {
+        public double getSize() {
             return size;
         }
 
@@ -125,8 +130,8 @@ public class JAVA_06_06 {
             this.color = palette[colorIndex];
         }
 
-        private int getDistance(int targetX, int targetY) {
-            return Math.abs(this.getX() - targetX) + Math.abs(this.getY() - targetY);
+        private int getDistance(double targetX, double targetY) {
+            return Math.abs(this.getX() - (int) targetX) + Math.abs(this.getY() - (int) targetY);
         }
 
         public void think(SimulationModel model) {
@@ -139,8 +144,8 @@ public class JAVA_06_06 {
             if (getControlMode() == 1) {
                 Square bestSquare = model.findClosestSquare(this);
                 if (bestSquare != null) {
-                    targetX = bestSquare.getX();
-                    targetY = bestSquare.getY();
+                    targetX = (int) bestSquare.getX();
+                    targetY = (int) bestSquare.getY();
                 }
 
                 // Prioritise X moves
@@ -165,8 +170,8 @@ public class JAVA_06_06 {
                 }
 
                 if (currentTarget != null) {
-                    targetX = currentTarget.getX();
-                    targetY = currentTarget.getY();
+                    targetX = (int) currentTarget.getX();
+                    targetY = (int) currentTarget.getY();
                 }
 
                 if (targetX != -1 && targetY != -1) {
@@ -279,14 +284,12 @@ public class JAVA_06_06 {
                     if (i % 2 == 0) {
                         players[i].setX(width / 4);
                         players[i].setPrevX(width / 4);
-                        players[i].setY(height / 2);
-                        players[i].setPrevY(height / 2);
                     } else {
                         players[i].setX(width * 3 / 4);
                         players[i].setPrevX(width * 3 / 4);
-                        players[i].setY(height / 2);
-                        players[i].setPrevY(height / 2);
                     }
+                    players[i].setY(height / 2);
+                    players[i].setPrevY(height / 2);
                 }
             }
         }
@@ -298,18 +301,27 @@ public class JAVA_06_06 {
                 if (s1.active) {
                     boolean collided = false;
 
-                    int nextX = s1.getNextX();
-                    int nextY = s1.getNextY();
+                    double nextX = s1.getNextX();
+                    double nextY = s1.getNextY();
 
                     // Square-wall collision
                     boolean hitWallX = (nextX <= 1 || nextX + s1.getSize() >= width);
-                    boolean hitWallY = (nextY <= 1 || nextY + s1.getSize() >= height + 1);
+                    boolean hitTopWallY = (nextY <= 1);
+                    boolean hitBottomWallY = (nextY + s1.getSize() >= height + 1);
 
-                    if (hitWallX || hitWallY) {
-                        collided = true;
+                    if (hitWallX || hitTopWallY || hitBottomWallY) {
                         collisionEvent = true;
+                        collided = true;
                         if (hitWallX) s1.bounceX();
-                        if (hitWallY) s1.bounceY();
+                        if (hitBottomWallY) {
+                            s1.bounceY();
+                            double excess = (s1.getY() + s1.getSize()) - height;
+                            s1.setY(height - s1.getSize() - excess);
+                        } else if (hitTopWallY) {
+                            s1.bounceY();
+                            double excess = 1 - s1.getY();
+                            s1.setY(1 + excess);
+                        }
                     }
 
                     // Square-square collision
@@ -372,7 +384,7 @@ public class JAVA_06_06 {
             return 0;
         }
 
-        private boolean checkIntersection(int x1, int y1, int size1, int x2, int y2, int size2) {
+        private boolean checkIntersection(double x1, double y1, double size1, double x2, double y2, double size2) {
             return x1 < x2 + size2 && x1 + size1 > x2 && y1 < y2 + size2 && y1 + size1 > y2;
         }
 
@@ -431,11 +443,15 @@ public class JAVA_06_06 {
             framexyc(1, 1, width, height, '#');
         }
 
-        public void clearSquares(Square[] squares) {
+        public void clearSquares(Square[] squares, int boardHeight) {
             setfgcolor(0);
             for (Square s : squares) {
                 if (!s.isCleaned()) {
-                    framexyc(s.getX(), s.getY(), s.getX() + s.getSize() - 1, s.getY() + s.getSize() - 1, ' ');
+                    int sY;
+                    if (s.getY() < 2) sY = 2;
+                    else if (s.getY() > boardHeight - 1) sY = (int) (boardHeight - s.getSize());
+                    else sY = (int) s.getY();
+                    framexyc((int) s.getX(), sY, (int) (s.getX() + s.getSize() - 1), (int) (sY + s.getSize() - 1), ' ');
                     if (!s.active) {
                         s.setCleaned(true);
                     }
@@ -443,11 +459,15 @@ public class JAVA_06_06 {
             }
         }
 
-        public void drawSquares(Square[] squares) {
+        public void drawSquares(Square[] squares, int boardHeight) {
             for (Square s : squares) {
                 if (s.active) {
                     setfgcolor(s.getColor());
-                    framexyc(s.getX(), s.getY(), s.getX() + s.getSize() - 1, s.getY() + s.getSize() - 1, '*');
+                    int sY;
+                    if (s.getY() < 2) sY = 2;
+                    else if (s.getY() > boardHeight - 1) sY = (int) (boardHeight - s.getSize());
+                    else sY = (int) s.getY();
+                    framexyc((int) s.getX(), sY, (int) (s.getX() + s.getSize() - 1), (int) (sY + s.getSize() - 1), '*');
                 }
             }
         }
@@ -465,12 +485,12 @@ public class JAVA_06_06 {
         }
 
         public void renderClear(SimulationModel model) {
-            clearSquares(model.getSquares());
+            clearSquares(model.getSquares(), model.height);
             for (Player plr : model.players) clearPlayer(plr);
         }
 
         public void renderDraw(SimulationModel model) {
-            drawSquares(model.getSquares());
+            drawSquares(model.getSquares(), model.height);
             for (Player plr : model.players) drawPlayer(plr);
         }
 
