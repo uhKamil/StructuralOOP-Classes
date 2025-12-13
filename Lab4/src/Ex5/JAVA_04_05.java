@@ -1,7 +1,6 @@
+// Kamil Wolbach (280161)
 import static java.lang.IO.*;
 import static term.term.*;
-
-import term.*;
 
 final double X = 50000; // a single straight track of length X
 final double t1 = 60; // time of Train 1's acceleration 

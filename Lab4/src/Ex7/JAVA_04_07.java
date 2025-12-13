@@ -1,3 +1,4 @@
+// Kamil Wolbach (280161)
 //this file presents two basic examples of the creation and usage of complex data types
 //until not told otherwise remove the code below before creating your solutions
 

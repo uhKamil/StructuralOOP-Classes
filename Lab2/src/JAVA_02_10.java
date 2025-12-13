@@ -1,7 +1,9 @@
+// Kamil Wolbach (280161)
+// TODO: The spiral turned out to be kind of buggy
+
 import static java.lang.IO.*;  //including package to be able to use simple print()
 
 //move cursor position to column x, row y
-
 void gotoxy(int x, int y) {
     String GOTO_XY = "\u001b[%d;%dH";
     print(String.format(GOTO_XY, y, x));

@@ -1,3 +1,4 @@
+// Kamil Wolbach (280161)
 import static java.lang.IO.print;
 
 public double vt = 3;

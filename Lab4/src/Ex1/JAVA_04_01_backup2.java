@@ -1,3 +1,4 @@
+// Kamil Wolbach (280161)
 import static java.lang.IO.*;
 
 static long LCG(long a, long s, long c, long m) {

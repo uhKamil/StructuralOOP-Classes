@@ -44,11 +44,11 @@ public class LanguageDetectorFX extends Application {
         this.parser = new DocumentParser();
 
         LanguageData unigramLoader = new LanguageData();
-        unigramLoader.loadCsv("./ClassesProjects/src/TextClassification/letterFrequency.csv");
+        unigramLoader.loadCsv("letterFrequency.csv");
         this.unigramKnowledgeBase = unigramLoader.getProfiles();
 
         LanguageData bigramLoader = new LanguageData();
-        bigramLoader.loadCsv("./ClassesProjects/src/TextClassification/bigramsFrequency.csv");
+        bigramLoader.loadCsv("bigramsFrequency.csv");
         this.bigramKnowledgeBase = bigramLoader.getProfiles();
 
         if (!bigramKnowledgeBase.isEmpty()) {

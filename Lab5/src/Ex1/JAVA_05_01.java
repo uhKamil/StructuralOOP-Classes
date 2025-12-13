@@ -1,3 +1,4 @@
+// Kamil Wolbach (280161)
 package Ex1;
 
 import static java.lang.IO.*;

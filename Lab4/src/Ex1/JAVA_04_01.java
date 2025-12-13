@@ -1,3 +1,4 @@
+// Kamil Wolbach (280161)
 import java.util.Scanner;
 import static java.lang.IO.*;
 

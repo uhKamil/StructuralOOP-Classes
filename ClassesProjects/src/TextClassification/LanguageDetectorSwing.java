@@ -16,7 +16,7 @@ public class LanguageDetectorSwing extends JFrame {
 
     public LanguageDetectorSwing() {
         LanguageData loader = new LanguageData();
-        loader.loadCsv("./ClassesProjects/src/TextClassification/letterFrequency.csv");
+        loader.loadCsv("letterFrequency.csv");
         this.knowledgeBase = loader.getProfiles();
         this.parser = new DocumentParser();
 

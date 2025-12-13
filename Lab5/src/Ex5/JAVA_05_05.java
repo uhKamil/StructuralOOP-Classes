@@ -1,3 +1,4 @@
+// Kamil Wolbach (280161)
 import static java.lang.IO.*;
 import static term.term.*;
 
@@ -413,8 +414,8 @@ static class SimulationModel {
         return bestSquare;
     }
 
-    public void playersThink(SimulationModel model, Player[] players) {
-        for (Player plr : players) {
+    public void playersThink(SimulationModel model) {
+        for (Player plr : model.players) {
             plr.think(model);
         }
     }
@@ -489,12 +490,12 @@ static class SimulationView {
         displayUserInfo(model);
     }
 
-    public void uiInfo(SimulationModel model, Player[] players, long timeLeft) {
+    public void uiInfo(SimulationModel model, long timeLeft) {
         setfgcolor(7);
         int plr_index = 1;
-        for (Player plr : players) {
+        for (Player plr : model.players) {
             String player_info = String.format(" %d ", plr.getScore());
-            gotoxy((model.width - player_info.length()) * plr_index / (players.length + 1), 1);
+            gotoxy((model.width - player_info.length()) * plr_index / (model.players.length + 1), 1);
             print(player_info);
             plr_index += 1;
         }
@@ -576,7 +577,7 @@ static class SimulationController {
             view.renderClear(model);
 
             boolean collision = model.updateSquares();
-            model.playersThink(model, model.players);
+            model.playersThink(model);
             int eatEvent1 = model.updatePlayer(model.players[0]);
             int eatEvent2 = model.updatePlayer(model.players[1]);
 
@@ -587,7 +588,7 @@ static class SimulationController {
             view.renderDraw(model);
             long timeLeft = roundLength - (currentTime() - startTime) / 1000;
 
-            view.uiInfo(model, model.players, timeLeft);
+            view.uiInfo(model, timeLeft);
 
             if (!model.getSquaresLeft()) {
                 gameActive = false;
@@ -616,7 +617,7 @@ static class SimulationController {
 
     private void loadConfiguration(Player[] players) {
 //        String fileName = "conf.cfg";
-        String fileName = "Ex5" + File.separator + "conf.cfg";
+        String fileName = "src" + File.separator + "Ex5" + File.separator + "conf.cfg";
         File file = new File(fileName);
 
         if (!file.exists()) {

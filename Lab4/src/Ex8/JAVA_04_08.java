@@ -1,3 +1,4 @@
+// Kamil Wolbach (280161)
 import static java.lang.IO.*;  //including package to be able to use simple print()
 import static term.term.*;     //includes package term (createElements() functions were moved there)
 

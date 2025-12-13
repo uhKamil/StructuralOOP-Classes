@@ -1,3 +1,4 @@
+// Kamil Wolbach (280161)
 import java.util.Random;
 import java.security.SecureRandom;
 import static term.term.*;

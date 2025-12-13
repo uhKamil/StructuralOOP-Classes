@@ -1,3 +1,6 @@
+// Kamil Wolbach (280161)
+// TODO: The spiral turned out to be kind of buggy
+
 import static java.lang.IO.*;  //including package to be able to use simple print()
 
 //move cursor position to column x, row y

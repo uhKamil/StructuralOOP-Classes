@@ -1,3 +1,4 @@
+// Kamil Wolbach (280161)
 import static java.lang.IO.*;
 
 final double X = 50000; // a single straight track of length X

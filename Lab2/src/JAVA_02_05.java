@@ -1,5 +1,6 @@
+// Kamil Wolbach (280161)
+
 import static java.lang.IO.*;  //including package to be able to use simple print()
-Math math;
 
 //move cursor position to column x, row y
 void gotoxy(int x, int y) {

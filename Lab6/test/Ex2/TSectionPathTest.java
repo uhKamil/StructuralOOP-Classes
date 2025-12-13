@@ -1,3 +1,4 @@
+// Kamil Wolbach (280161)
 package Ex2;
 
 import org.junit.jupiter.api.Test;

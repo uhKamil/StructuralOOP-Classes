@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class LanguageDetectorTerminal {
     static void main() {
         LanguageData loader = new LanguageData();
-        loader.loadCsv("./ClassesProjects/src/TextClassification/letterFrequency.csv");
+        loader.loadCsv("letterFrequency.csv");
         Map<String, Map<String, Double>> knowledgeBase = loader.getProfiles();
 
         System.out.println("The program can detect languages: " + knowledgeBase.keySet());

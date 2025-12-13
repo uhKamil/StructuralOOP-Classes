@@ -10,10 +10,21 @@
     <orderEntry type="module-library">
       <library name="jline">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/src/term/jline.jar!/" />
+          <root url="jar://$MODULE_DIR$/libs/term/jline.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="libs">
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/libs" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/libs" />
+        </SOURCES>
       </library>
     </orderEntry>
   </component>

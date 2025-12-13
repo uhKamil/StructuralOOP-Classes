@@ -1,5 +1,5 @@
+// Kamil Wolbach (280161)
 //For best results run this code in at least 120x30 terminal window
-
 import static java.lang.IO.*;  //including package IO to be able to use simple print()
 import static term.term.*;     //include package term (clrscr, gotoxy, setfgcolor, etc., were moved there for clarity)
 
