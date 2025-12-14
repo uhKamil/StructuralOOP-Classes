@@ -15,7 +15,7 @@ public class JAVA_06_01 {
     }
 
     /**
-     * Stores only the corners of the path
+     * Stores only the corners of the path.
      */
     public static class TCornerPath {
         TPoint[] points = new TPoint[100];
@@ -64,8 +64,9 @@ public class JAVA_06_01 {
             double xDiff = p2.x - p1.x;
             double yDiff = p2.y - p1.y;
 
-            double dx = xDiff / Math.max(xDiff, yDiff);
-            double dy = yDiff / Math.max(xDiff, yDiff);
+            double steps = Math.max(xDiff, yDiff);
+            double dx = xDiff / steps;
+            double dy = yDiff / steps;
 
             double x = p1.x;
             double y = p1.y;
@@ -84,26 +85,34 @@ public class JAVA_06_01 {
         return false;
     }
 
+    /**
+     * Draw the path by interpolating between corners
+     */
     public static void drawPath(TCornerPath path, char c) {
+        if (path.count < 2) return;
         for (int i = 0; i < path.count - 1; i++) {
             TPoint p1 = path.points[i];
             TPoint p2 = path.points[i + 1];
+            drawSegment(p1, p2, c);
+        }
+    }
 
-            double xDiff = p2.x - p1.x;
-            double yDiff = p2.y - p1.y;
+    private static void drawSegment(TPoint p1, TPoint p2, char c) {
+        double xDiff = p2.x - p1.x;
+        double yDiff = p2.y - p1.y;
 
-            double dx = xDiff / Math.max(xDiff, yDiff);
-            double dy = yDiff / Math.max(xDiff, yDiff);
+        double steps = Math.max(Math.abs(xDiff), Math.abs(yDiff));
+        double dx = xDiff / steps;
+        double dy = yDiff / steps;
 
-            double x = p1.x;
-            double y = p1.y;
+        double x = p1.x;
+        double y = p1.y;
 
-            for (int j = 1; j <= Math.max(Math.abs(xDiff) + 1, Math.abs(yDiff) + 1); j++) {
-                gotoxy((int) Math.round(x), (int) Math.round(y));
-                print(c);
-                x += dx;
-                y += dy;
-            }
+        for (int j = 1; j <= steps + 1; j++) {
+            gotoxy((int) Math.round(x), (int) Math.round(y));
+            print(c);
+            x += dx;
+            y += dy;
         }
     }
 
@@ -114,9 +123,6 @@ public class JAVA_06_01 {
         return (dx == 0) || (dy == 0) || (dx == dy);
     }
 
-    /**
-     * Adds a segment of connected points to the given path.
-     */
     public static void addSegment(TCornerPath path, TPoint a, TPoint b) {
         if (!isSegmentValid(a, b)) return;
         boolean addA = true;
@@ -131,30 +137,20 @@ public class JAVA_06_01 {
     }
 
     public static void AddSectionsToPath(TCornerPath path, TPoint... points) {
-        if (points.length == 0) return;
+        if (points.length < 2) return;
 
-        // if points are odd, then the last point should be added to the path but not
-        // to the segment; if points are even, then add each to separate segments
+        addPoint(path, points[0]);
 
-        for (int i = 0; i < points.length - 1; i++) {
-            TPoint p1 = points[i];
-            TPoint p2 = points[i + 1];
+        for (int i = 1; i < points.length; i++) {
+            TPoint prev = points[i - 1];
+            TPoint curr = points[i];
 
-            if (isSegmentValid(p1, p2)) {
-                addSegment(path, p1, p2);
-            } else {
-                TPoint last = getLastPoint(path);
-                if (last == null || last.x != p1.x || last.y != p1.y) {
-                    addPoint(path, p1);
+            if (isSegmentValid(prev, curr)) {
+                TPoint last = path.points[path.count - 1];
+                if (last.x != curr.x || last.y != curr.y) {
+                    addPoint(path, curr);
                 }
             }
-        }
-
-        TPoint finalP = points[points.length - 1];
-        TPoint lastInPath = getLastPoint(path);
-        if (lastInPath == null || lastInPath.x != finalP.x || lastInPath.y != finalP.y) {
-            if (points.length > 1 && !isSegmentValid(points[points.length - 2], finalP)) addPoint(path, finalP);
-            else if (points.length == 1) addPoint(path, finalP);
         }
     }
 
@@ -189,45 +185,41 @@ public class JAVA_06_01 {
         WriteStringOnPathWithOffset(text, path, startIdx, path.print_direction, path.wrap_around, point(0, 0));
     }
 
-    /**
-     * Prints string on a translated path, without changing the path structure itself
-     */
+    static void WriteStringOnPath(String text, TCornerPath path, int startIdx, int direction, int wrap) {
+        WriteStringOnPathWithOffset(text, path, startIdx, direction, wrap, point(0, 0));
+    }
+
     static void WriteStringOnPathWithOffset(String text, TCornerPath path, int startIdx, int direction, int wrap, TPoint offset) {
-        if (path.count == 0) return;
+        if (path.count < 2) return;
 
         int totalSegmentLength = getSegmentLength(path);
+        if (totalSegmentLength == 0) return;
 
         int currentIdx = startIdx % totalSegmentLength;
         if (currentIdx < 0) currentIdx += totalSegmentLength;
 
         for (int i = 0; i < text.length(); i++) {
             if (wrap == 0 && (currentIdx < 0 || currentIdx >= totalSegmentLength)) break;
-
             int actualIdx = (currentIdx % totalSegmentLength + totalSegmentLength) % totalSegmentLength;
 
-            // Check in which segment the character should be printed
-            int segmentIndicator = getSegmentIndex(path, actualIdx, 's');
-            int finalIdx = getSegmentIndex(path, actualIdx, 'i');
-            TPoint segment_p1, segment_p2;
-            if (segmentIndicator < path.points.length - 1) {
-                segment_p1 = path.points[segmentIndicator];
-                segment_p2 = path.points[segmentIndicator + 1];
-            } else {
-                segment_p1 = path.points[segmentIndicator - 1];
-                segment_p2 = path.points[segmentIndicator];
-            }
+            int segmentIndex = getSegmentIndex(path, actualIdx);
+            if (segmentIndex >= path.count - 1) segmentIndex = path.count - 2;
 
-            double xDiff = segment_p2.x - segment_p1.x;
-            double yDiff = segment_p2.y - segment_p1.y;
+            TPoint p1 = path.points[segmentIndex];
+            TPoint p2 = path.points[segmentIndex + 1];
 
-            double dx = finalIdx * xDiff / Math.max(xDiff, yDiff);
-            double dy = finalIdx * yDiff / Math.max(xDiff, yDiff);
+            int distanceIntoSegment = getDistanceIntoSegment(path, actualIdx, segmentIndex);
 
-            double x = segment_p1.x;
-            double y = segment_p1.y;
+            int dx = p2.x - p1.x;
+            int dy = p2.y - p1.y;
+            int segmentLen = Math.max(Math.abs(dx), Math.abs(dy));
 
-            gotoxy((int) Math.round(x + dx + offset.x), (int) Math.round(y + dy + offset.y));
-            print(text.charAt(i));
+            if (segmentLen == 0) continue;
+
+            double xPos = p1.x + ((double) dx / segmentLen) * distanceIntoSegment;
+            double yPos = p1.y + ((double) dy / segmentLen) * distanceIntoSegment;
+
+            printAt((int) Math.round(xPos + offset.x), (int) Math.round(yPos + offset.y), String.valueOf(text.charAt(i)));
 
             if (direction == 0) currentIdx++;
             else currentIdx--;
@@ -251,33 +243,35 @@ public class JAVA_06_01 {
         return totalSegmentLength;
     }
 
-    public static int getSegmentIndex(TCornerPath path, int actualIdx, char param) {
-        int segmentLengthSum = actualIdx;
-        int segmentIndicator = 0;
-        int finalIdx = segmentLengthSum;
+    /**
+     * Finds the index of the segment's starting point containing actualIdx
+     */
+    public static int getSegmentIndex(TCornerPath path, int actualIdx) {
+        int currentLenSum = 0;
+        for (int i = 0; i < path.count - 1; i++) {
+            TPoint p1 = path.points[i];
+            TPoint p2 = path.points[i + 1];
+            int segLen = Math.max(Math.abs(p2.x - p1.x), Math.abs(p2.y - p1.y));
 
-        for (int j = 0; j < path.count - 1; j++) {
-            TPoint p1 = path.points[j];
-            TPoint p2 = path.points[j + 1];
-
-            double xDiff = p2.x - p1.x;
-            double yDiff = p2.y - p1.y;
-            int segmentLength;
-
-            if (j < path.count - 2) {
-                segmentLength = (int) Math.max(Math.abs(xDiff), Math.abs(yDiff));
-            } else segmentLength = (int) Math.max(Math.abs(xDiff) + 1, Math.abs(yDiff) + 1);
-            segmentLengthSum -= segmentLength;
-            if (finalIdx - segmentLength >= 0) finalIdx -= segmentLength;
-
-            if (segmentLengthSum < 0) {
-                segmentIndicator = j;
-                break;
+            if (actualIdx < currentLenSum + segLen) {
+                return i;
             }
+            currentLenSum += segLen;
         }
+        return path.count - 2;
+    }
 
-        if (param == 's') return segmentIndicator;
-        return finalIdx; // final id for specific segment
+    /**
+     * Calculates relative index within the specific segment
+     */
+    public static int getDistanceIntoSegment(TCornerPath path, int actualIdx, int segmentIndex) {
+        int currentLenSum = 0;
+        for (int i = 0; i < segmentIndex; i++) {
+            TPoint p1 = path.points[i];
+            TPoint p2 = path.points[i + 1];
+            currentLenSum += Math.max(Math.abs(p2.x - p1.x), Math.abs(p2.y - p1.y));
+        }
+        return actualIdx - currentLenSum;
     }
 
     static void printAt(int x, int y, String s) {
@@ -293,29 +287,17 @@ public class JAVA_06_01 {
         return false;
     }
 
-    /**
-     * Calculates the text's tip depending on the direction it's moving towards
-     */
     static int calculateTip(int startPos, int length, int direction, int pathLen) {
         int tip;
-        if (direction == 0) {
-            // Clockwise text [pos, pos + length]
-            tip = startPos + length - 2;
-        } else {
-            // Anticlockwise text [pos - length, pos]
-            tip = startPos - length + 2;
-        }
+        if (direction == 0) tip = startPos + length - 2;
+        else tip = startPos - length + 2;
         return norm(tip, pathLen);
     }
 
-    /**
-     * Java-adjusted norm calculator
-     */
     static int norm(int val, int max) {
         return (val % max + max) % max;
     }
 
-    // Two-sided shortest distance
     static int dist(int a, int b, int max) {
         int d = Math.abs(a - b);
         return Math.min(d, max - d);
@@ -325,19 +307,123 @@ public class JAVA_06_01 {
         clrscr();
         cursor_hide();
 
+        TFrame terminal = frame(120, 30);
+        TFrame bee = frame(20, 15);
+
         TCornerPath path1 = createCornerPath();
-        addPoint(path1, point(1, 1));
-        addSegment(path1, point(5, 5), point(9, 1));
-        AddSectionsToPath(path1, point(15, 15), point(30, 20));
-        TCornerPath path3 = createCornerPath();
-        AddSectionsToPath(path3, point(35, 17), point(40, 15));
-        addPath(path1, path3);
+        TCornerPath path2 = createCornerPath();
 
-        boolean p1 = isPointOnPath(path1, point(4, 4)); // true
+        AddSectionsToPath(path1,
+                point(1, 1),
+                point(terminal.width, 1),
+                point(terminal.width, terminal.height),
+                point(1, terminal.height),
+                point(1, 1)
+        );
+        path1.wrap_around = 1;
 
+        AddSectionsToPath(path2,
+                point((terminal.width - bee.width) / 2, (terminal.height - bee.height) / 2),
+                point((terminal.width + bee.width) / 2, (terminal.height - bee.height) / 2),
+                point((terminal.width + bee.width) / 2, (terminal.height + bee.height) / 2),
+                point((terminal.width - bee.width) / 2, (terminal.height + bee.height) / 2),
+                point((terminal.width - bee.width) / 2, (terminal.height - bee.height) / 2)
+        );
+        path2.wrap_around = 1;
+        path2.print_direction = 0;
+
+        int path1Len = getSegmentLength(path1);
+        int path2Len = getSegmentLength(path2);
+
+        String bee_ready = "Bee ready!";
+        String gameStart = ">> Welcome to our game! <<";
+        String pressS = ">> Press s to start <<";
+
+        String game_cleaner = "*".repeat(gameStart.length());
+        String press_cleaner = "*".repeat(pressS.length());
+
+        int bee1_pos = 0;
+        int bee2_pos = path2Len / 2;
+
+        int game_pos = terminal.width / 2;
+        int game_dir = 0;
+
+        int press_pos = terminal.width + terminal.height + (terminal.width / 2);
+        int press_dir = 1;
+
+        setfgcolor(7);
         drawPath(path1, '*');
-        delay(3000);
-        WriteStringOnPath("Hi there mate, how's life?", path1, 0);
+        drawPath(path2, '*');
+
+        setfgcolor(yellow);
+        WriteStringOnPath(bee_ready, path2, bee1_pos);
+        WriteStringOnPath(bee_ready, path2, bee2_pos);
+        setfgcolor(cyan);
+        WriteStringOnPath(gameStart, path1, game_pos, game_dir, 1);
+        WriteStringOnPath(pressS, path1, press_pos, press_dir, 1);
+
+        while (true) {
+            int next_bee1_pos = (bee1_pos + 1) % path2Len;
+            int next_bee2_pos = (bee2_pos + 1) % path2Len;
+
+            int next_game_pos = (game_dir == 0) ? game_pos + 1 : game_pos - 1;
+            int next_press_pos = (press_dir == 0) ? press_pos + 1 : press_pos - 1;
+
+            int next_game_dir = game_dir;
+            int next_press_dir = press_dir;
+            int final_game_pos, final_press_pos;
+
+            int gameTip = calculateTip(next_game_pos, gameStart.length(), game_dir, path1Len);
+            int pressTip = calculateTip(next_press_pos, pressS.length(), press_dir, path1Len);
+            int gameAnchor = norm(next_game_pos, path1Len);
+            int pressAnchor = norm(next_press_pos, path1Len);
+
+            boolean collision = (dist(gameAnchor, pressAnchor, path1Len) <= 1) || (dist(gameTip, pressTip, path1Len) <= 1);
+
+            setfgcolor(7);
+            if (collision) {
+                next_game_dir = 1 - game_dir;
+                next_press_dir = 1 - press_dir;
+
+                if (next_game_dir == 1) final_game_pos = norm(game_pos + gameStart.length() - 1, path1Len);
+                else final_game_pos = norm(game_pos - gameStart.length() + 1, path1Len);
+                if (next_press_dir == 1) final_press_pos = norm(press_pos + pressS.length() - 1, path1Len);
+                else final_press_pos = norm(press_pos - pressS.length() + 1, path1Len);
+
+                WriteStringOnPath(game_cleaner, path1, game_pos, game_dir, 1);
+                WriteStringOnPath(press_cleaner, path1, press_pos, press_dir, 1);
+            } else {
+                final_game_pos = norm(next_game_pos, path1Len);
+                final_press_pos = norm(next_press_pos, path1Len);
+
+                WriteStringOnPath("*", path1, game_pos);
+                WriteStringOnPath("*", path1, press_pos);
+            }
+
+            WriteStringOnPath("*", path2, bee1_pos);
+            WriteStringOnPath("*", path2, bee2_pos);
+
+            setfgcolor(yellow);
+            WriteStringOnPath(bee_ready, path2, next_bee1_pos);
+            WriteStringOnPath(bee_ready, path2, next_bee2_pos);
+
+            setfgcolor(cyan);
+            WriteStringOnPath(gameStart, path1, final_game_pos, next_game_dir, 1);
+            WriteStringOnPath(pressS, path1, final_press_pos, next_press_dir, 1);
+            setfgcolor(black);
+
+            bee1_pos = next_bee1_pos;
+            bee2_pos = next_bee2_pos;
+
+            game_pos = final_game_pos;
+            press_pos = final_press_pos;
+            game_dir = next_game_dir;
+            press_dir = next_press_dir;
+
+            if (handleStart()) break;
+            delay(50);
+        }
+        setfgcolor(7);
         clrscr();
     }
 }
