@@ -507,9 +507,9 @@ public class JAVA_06_06 {
 
     private static discreteCoords getDiscreteCoords(int boardWidth, int boardHeight, Square s) {
         int sX, sY;
-        if (getX(s) > boardWidth - 1) sX = (int) (boardWidth - getSize(s));
+        if (getX(s) >= boardWidth - 1) sX = (int) (boardWidth - getSize(s));
         else sX = (int) getX(s);
-        if (getY(s) > boardHeight - 1) sY = (int) (boardHeight - getSize(s));
+        if (getY(s) >= boardHeight - 1) sY = (int) (boardHeight - getSize(s));
         else sY = (int) getY(s);
         return new discreteCoords(sX, sY);
     }
