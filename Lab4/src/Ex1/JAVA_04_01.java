@@ -54,18 +54,19 @@ public static class LCGNumberGenerator {
     }
 }
 
-    void main() {
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
-            print("Enter how many numbers I should generate: ");
-            int n = scanner.nextInt();
-            if (n == 0) {
-                break;
-            }
-            print("Enter the seed: ");
-            long s = scanner.nextLong();
-
-            LCGNumberGenerator generator = new LCGNumberGenerator(s);
-            generator.PRNG(n);
+void main() {
+    Scanner scanner = new Scanner(System.in);
+    while (true) {
+        print("Enter how many numbers I should generate: ");
+        int n = scanner.nextInt();
+        if (n == 0) {
+            break;
         }
+        print("Enter the seed: ");
+        long s = scanner.nextLong();
+
+        LCGNumberGenerator generator = new LCGNumberGenerator(s);
+        generator.PRNG(n);
     }
+    scanner.close();
+}
